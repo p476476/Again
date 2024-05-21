@@ -1,0 +1,576 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Again.Scripts.Runtime.Commands;
+using Again.Scripts.Runtime.Commands.Camera;
+using Again.Scripts.Runtime.Commands.Image;
+using Again.Scripts.Runtime.Commands.OptionMenu;
+using Again.Scripts.Runtime.Commands.Spine;
+using Again.Scripts.Runtime.Commands.Transfer;
+using Again.Scripts.Runtime.Enums;
+using UnityEngine;
+
+namespace Again.Runtime.GoogleSheet
+{
+    public static class ScriptSheetReader
+    {
+        private static readonly Stack<OptionMenuCommand> OptionMenuCommandStack = new();
+        private static List<Command> commands;
+
+        private static readonly Dictionary<
+            string,
+            Func<Dictionary<string, string>, Command>
+        > CommandCreators =
+            new()
+            {
+                { "LookAtSpine", CreateLookAtSpineCommand },
+                { "MoveBackCamera", CreateMoveBackCameraCommand },
+                { "ShakeCamera", CreateShakeCameraCommand },
+                { "Say", CreateSayCommand },
+                { "ShakeDialogue", CreateShakeDialogueCommand },
+                { "ChangeSpineColor", CreateChangeSpineColorCommand },
+                { "ChangeSpine", CreateChangeSpineCommand },
+                { "HideSpine", CreateHideSpineCommand },
+                { "JumpSpine", CreateJumpSpineCommand },
+                { "MoveSpine", CreateMoveSpineCommand },
+                { "ScaleSpine", CreateScaleSpineCommand },
+                { "ShakeSpine", CreateShakeSpineCommand },
+                { "ShowSpine", CreateShowSpineCommand },
+                { "Wait", CreateWaitCommand },
+                { "ChangeBackground", CreateChangeBackgroundCommand },
+                { "ShowTransfer", CreateShowTransferCommand },
+                { "HideTransfer", CreateHideTransferCommand },
+                { "ChangeImageColor", CreateChangeImageColorCommand },
+                { "ChangeImage", CreateChangeImageCommand },
+                { "HideImage", CreateHideImageCommand },
+                { "JumpImage", CreateJumpImageCommand },
+                { "MoveImage", CreateMoveImageCommand },
+                { "ScaleImage", CreateScaleImageCommand },
+                { "ShakeImage", CreateShakeImageCommand },
+                { "ShowImage", CreateShowImageCommand },
+                { "OptionMenu", CreateOptionMenuCommand },
+                { "OptionMenuEnd", CreateOptionMenuEndCommand },
+                { "Option", CreateOptionCommand },
+                { "LookAtImage", CreateLookAtImageCommand }
+            };
+
+        public static List<Command> Read(List<string> rows)
+        {
+            commands = new List<Command>();
+            OptionMenuCommandStack.Clear();
+            foreach (var rowData in rows)
+            {
+                // 拆分資料
+                var rowString = rowData.Trim('"');
+                var values = rowString.Split("\",\"").ToList();
+
+                var commandString = values[0];
+                var parameterDict = new Dictionary<string, string>();
+                for (var i = 3; i < values.Count; i++)
+                    if (values[i].Contains("="))
+                    {
+                        var parameter = values[i].Split("=");
+                        parameterDict.Add(parameter[0], parameter[1]);
+                    }
+
+                parameterDict.Add("Command", commandString);
+                parameterDict.Add("Character", values[1]);
+                parameterDict.Add("Content", values[2]);
+
+
+                if (CommandCreators.TryGetValue(commandString, out var creator))
+                    commands.Add(creator(parameterDict));
+                else
+                    Debug.Log($"Command {commandString} not found");
+            }
+
+            return commands;
+        }
+
+        private static Command CreateLookAtImageCommand(Dictionary<string, string> arg)
+        {
+            var properties = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
+            };
+            var command = new LookAtImageCommand();
+            SetProperties(command, properties, arg);
+            return command;
+        }
+
+        private static Command CreateOptionCommand(Dictionary<string, string> dict)
+        {
+            var command = new OptionCommand
+            {
+                Text = dict["Content"]
+            };
+            OptionMenuCommandStack.Peek().Options.Add(command);
+            return command;
+        }
+
+        private static Command CreateOptionMenuEndCommand(Dictionary<string, string> arg)
+        {
+            var command = new OptionMenuEndCommand();
+            if (OptionMenuCommandStack.Count > 0)
+            {
+                var optionMenuCommand = OptionMenuCommandStack.Pop();
+                if (optionMenuCommand.Options.Count == 0)
+                    Debug.Log("OptionMenuEndCommand: 沒有新增選項");
+
+                foreach (var option in optionMenuCommand.Options)
+                {
+                    option.EndCommand = command;
+
+                    var index = commands.IndexOf(option);
+                    if (index == commands.Count - 1)
+                    {
+                        option.NextCommand = command;
+                        continue;
+                    }
+
+                    if (commands[index + 1] is OptionCommand)
+                        option.NextCommand = command;
+                    else
+                        option.NextCommand = commands[index + 1];
+                }
+            }
+
+            return command;
+        }
+
+        private static Command CreateOptionMenuCommand(Dictionary<string, string> arg)
+        {
+            var command = new OptionMenuCommand();
+            OptionMenuCommandStack.Push(command);
+            return command;
+        }
+
+        private static Command CreateShowImageCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "ImageName", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosX", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosY", Type = "float", CanBeEmpty = true },
+                new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true }
+            };
+
+            var command = new ShowImageCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateShakeImageCommand(Dictionary<string, string> arg)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Strength", Type = "float", CanBeEmpty = true },
+                new() { Name = "Vibrato", Type = "int", CanBeEmpty = true },
+                new() { Name = "Randomness", Type = "float", CanBeEmpty = true },
+                new() { Name = "Snapping", Type = "boolean", CanBeEmpty = true },
+                new() { Name = "FadeOut", Type = "boolean", CanBeEmpty = true },
+                new() { Name = "ShakeType", Type = "ShakeType", CanBeEmpty = true }
+            };
+            var command = new ShakeImageCommand();
+            SetProperties(command, propertyInfos, arg);
+            return command;
+        }
+
+
+        private static Command CreateScaleImageCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
+            };
+            var command = new ScaleImageCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateMoveImageCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosX", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosY", Type = "float", CanBeEmpty = true }
+            };
+            var command = new MoveImageCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateJumpImageCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "JumpPower", Type = "float", CanBeEmpty = true },
+                new() { Name = "JumpCount", Type = "int", CanBeEmpty = true }
+            };
+
+            var command = new JumpImageCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateHideImageCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "HideType", Type = "HideAnimationType", CanBeEmpty = true }
+            };
+            var command = new HideImageCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+
+        private static Command CreateChangeImageCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "ImageName", Type = "string", CanBeEmpty = false }
+            };
+            var command = new ChangeImageCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateChangeImageColorCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "ChangeColorType", Type = "ChangeColorType", CanBeEmpty = true }
+            };
+            var command = new ChangeImageColorCommand();
+            SetProperties(command, propertyInfos, dict);
+            if (dict.TryGetValue("Color", out var colorString))
+                command.ColorDelta = ParseColorString(colorString);
+            return command;
+        }
+
+        private static Command CreateHideTransferCommand(Dictionary<string, string> dict)
+        {
+            return new HideTransferCommand();
+        }
+
+        private static Command CreateShowTransferCommand(Dictionary<string, string> dict)
+        {
+            return new ShowTransferCommand();
+        }
+
+        private static Command CreateChangeBackgroundCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "ImageName", Type = "string", CanBeEmpty = false }
+            };
+            var command = new ChangeBackgroundCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static WaitCommand CreateWaitCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true }
+            };
+            var command = new WaitCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ShowSpineCommand CreateShowSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Animation", Type = "string", CanBeEmpty = false },
+                new() { Name = "Skin", Type = "string", CanBeEmpty = false },
+                new() { Name = "PosX", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosY", Type = "float", CanBeEmpty = true },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
+                new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true }
+            };
+            var showSpineCommand = new ShowSpineCommand { SpineName = dict["Character"] };
+            SetProperties(showSpineCommand, propertyInfos, dict);
+            return showSpineCommand;
+        }
+
+        private static SayCommand CreateSayCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Character", Type = "string", CanBeEmpty = false },
+                new() { Name = "Voice", Type = "string", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "Key", Type = "string", CanBeEmpty = true }
+            };
+            var command = new SayCommand
+            {
+                Text = dict["Content"]
+            };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ShakeSpineCommand CreateShakeSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Strength", Type = "float", CanBeEmpty = true },
+                new() { Name = "Vibrato", Type = "int", CanBeEmpty = true },
+                new() { Name = "Randomness", Type = "float", CanBeEmpty = true },
+                new() { Name = "Snapping", Type = "boolean", CanBeEmpty = true },
+                new() { Name = "ShakeType", Type = "ShakeType", CanBeEmpty = true }
+            };
+            var command = new ShakeSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ScaleSpineCommand CreateScaleSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
+            };
+            var command = new ScaleSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static MoveSpineCommand CreateMoveSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosX", Type = "float", CanBeEmpty = true },
+                new() { Name = "PosY", Type = "float", CanBeEmpty = true }
+            };
+            var command = new MoveSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static JumpSpineCommand CreateJumpSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "JumpPower", Type = "float", CanBeEmpty = true },
+                new() { Name = "JumpCount", Type = "int", CanBeEmpty = true }
+            };
+            var command = new JumpSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static HideSpineCommand CreateHideSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "HideType", Type = "HideAnimationType", CanBeEmpty = true }
+            };
+            var command = new HideSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ChangeSpineCommand CreateChangeSpineCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Skin", Type = "string", CanBeEmpty = true },
+                new() { Name = "Animation", Type = "string", CanBeEmpty = true },
+                new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true }
+            };
+            var command = new ChangeSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ChangeSpineColorCommand CreateChangeSpineColorCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "ChangeColorType", Type = "ChangeColorType", CanBeEmpty = true }
+            };
+            var command = new ChangeSpineColorCommand { SpineName = dict["Character"] };
+            if (dict.TryGetValue("Color", out var colorString))
+                command.ColorDelta = ParseColorString(colorString);
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+
+        private static ShakeDialogueCommand CreateShakeDialogueCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true }
+            };
+            var command = new ShakeDialogueCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ShakeCameraCommand CreateShakeCameraCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true }
+            };
+            var command = new ShakeCameraCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static LookAtSpineCommand CreateLookAtSpineCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
+                new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
+            };
+            var command = new LookAtSpineCommand { SpineName = dict["Character"] };
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateMoveBackCameraCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true }
+            };
+            var command = new MoveBackCameraCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Color32 ParseColorString(string color)
+        {
+            var match = Regex.Match(color, @"\((\d+),(\d+),(\d+)\)");
+            var c = new Color32(
+                byte.Parse(match.Groups[1].Value),
+                byte.Parse(match.Groups[2].Value),
+                byte.Parse(match.Groups[3].Value),
+                255
+            );
+            return c;
+        }
+
+        private static void SetProperties(Command command, List<PropertyInfo> propertyInfos,
+            Dictionary<string, string> dict)
+        {
+            foreach (var propertyInfo in propertyInfos)
+            {
+                dict.TryGetValue(propertyInfo.Name, out var stringValue);
+
+                if (string.IsNullOrEmpty(stringValue))
+                {
+                    if (propertyInfo.CanBeEmpty)
+                        continue;
+
+                    Debug.LogError($" {command.GetType()} {propertyInfo.Name} can't be empty");
+                    continue;
+                }
+
+                switch (propertyInfo.Type)
+                {
+                    case "string":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, stringValue);
+                        break;
+                    case "int":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, int.Parse(stringValue));
+                        break;
+                    case "float":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, float.Parse(stringValue));
+                        break;
+                    case "boolean":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, bool.Parse(stringValue));
+                        break;
+                    case "HideAnimationType":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                            command,
+                            Enum.Parse(typeof(HideAnimationType), stringValue)
+                        );
+                        break;
+                    case "ChangeColorType":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                            command,
+                            Enum.Parse(typeof(ChangeColorType), stringValue)
+                        );
+                        break;
+                    case "ShakeType":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                            command,
+                            Enum.Parse(typeof(ShakeType), stringValue)
+                        );
+                        break;
+                    case "ShowAnimationType":
+                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                            command,
+                            Enum.Parse(typeof(ShowAnimationType), stringValue)
+                        );
+                        break;
+                    default:
+                        Debug.LogError($"Type {propertyInfo.Type} not supported");
+                        break;
+                }
+            }
+        }
+    }
+}
