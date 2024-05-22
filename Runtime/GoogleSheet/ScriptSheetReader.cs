@@ -105,11 +105,16 @@ namespace Again.Runtime.GoogleSheet
 
         private static Command CreateOptionCommand(Dictionary<string, string> dict)
         {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Key", Type = "string", CanBeEmpty = true }
+            };
             var command = new OptionCommand
             {
                 Text = dict["Content"]
             };
             OptionMenuCommandStack.Peek().Options.Add(command);
+            SetProperties(command, propertyInfos, dict);
             return command;
         }
 

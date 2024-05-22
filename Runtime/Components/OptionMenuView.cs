@@ -20,6 +20,16 @@ namespace Again.Scripts.Runtime.Components
             foreach (var button in _optionButtons) button.gameObject.SetActive(false);
         }
 
+        public void UpdateOptionTexts(List<string> options)
+        {
+            if (_container.isHidden) return;
+            for (var i = 0; i < options.Count; i++)
+            {
+                var optionButton = _optionButtons[i];
+                optionButton.GetComponentInChildren<Text>().text = options[i];
+            }
+        }
+
         public void Show(List<string> options, Action<int> onComplete)
         {
             for (var i = 0; i < options.Count; i++)

@@ -34,6 +34,7 @@ namespace Again.Scripts.Runtime.Components
             foreach (var option in command.Options)
                 options.Add(_GetOptionString(option));
 
+            _currentOptionMenuCommand = command;
             optionMenuView.Show(options, onComplete);
         }
 
@@ -59,6 +60,13 @@ namespace Again.Scripts.Runtime.Components
             if (_currentSayCommand != null)
                 dialogueView.SetCharacterAndText(_GetCharacterString(_currentSayCommand),
                     _GetTextString(_currentSayCommand));
+            if (_currentOptionMenuCommand != null)
+            {
+                var options = new List<string>();
+                foreach (var option in _currentOptionMenuCommand.Options)
+                    options.Add(_GetOptionString(option));
+                optionMenuView.UpdateOptionTexts(options);
+            }
         }
 
         public void SetLocaleDict(Dictionary<string, List<string>> localeDict)
