@@ -15,7 +15,7 @@ namespace Again.Scripts.Runtime.Commands
             if (sprite != null)
                 backgroundImage.sprite = sprite;
             else
-                Debug.LogWarning($"未找到名為 {ImageName} 的背景圖片。");
+                Debug.LogError($"Line {Id} 未找到背景圖片: {ImageName}");
 
             AgainSystem.Instance.NextCommand();
         }

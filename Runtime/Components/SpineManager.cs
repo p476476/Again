@@ -118,13 +118,25 @@ namespace Again.Scripts.Runtime.Components
 
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
             if (!string.IsNullOrEmpty(command.Animation))
-                spineAnimation.AnimationState.SetAnimation(0, command.Animation, command.IsLoop);
+                try
+                {
+                    spineAnimation.AnimationState.SetAnimation(0, command.Animation, command.IsLoop);
+                }
+                catch (Exception _)
+                {
+                    Debug.LogError($"Line {command.Id} 找不到Animation: {command.Animation}");
+                }
 
             if (!string.IsNullOrEmpty(command.Skin))
-            {
-                spineAnimation.skeleton.SetSkin(command.Skin);
-                spineAnimation.skeleton.SetToSetupPose();
-            }
+                try
+                {
+                    spineAnimation.skeleton.SetSkin(command.Skin);
+                    spineAnimation.skeleton.SetToSetupPose();
+                }
+                catch (Exception _)
+                {
+                    Debug.LogError($"Line {command.Id} 找不到Skin: {command.Skin}");
+                }
 
             spineAnimation.ApplyAnimation();
         }

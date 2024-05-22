@@ -17,6 +17,7 @@ namespace Again.Runtime.GoogleSheet
     {
         private static readonly Stack<OptionMenuCommand> OptionMenuCommandStack = new();
         private static List<Command> commands;
+        private static int _currentCommandIndex = -1;
 
         private static readonly Dictionary<
             string,
@@ -59,8 +60,11 @@ namespace Again.Runtime.GoogleSheet
         {
             commands = new List<Command>();
             OptionMenuCommandStack.Clear();
-            foreach (var rowData in rows)
+            rows.RemoveAt(0); // 移除標題列
+            for (var rowIndex = 0; rowIndex < rows.Count; rowIndex++)
             {
+                var rowData = rows[rowIndex];
+                _currentCommandIndex = rowIndex + 2;
                 // 拆分資料
                 var rowString = rowData.Trim('"');
                 var values = rowString.Split("\",\"").ToList();
@@ -76,13 +80,19 @@ namespace Again.Runtime.GoogleSheet
 
                 parameterDict.Add("Command", commandString);
                 parameterDict.Add("Character", values[1]);
-                parameterDict.Add("Content", values[2]);
+                parameterDict.Add("Text", values[2]);
 
 
                 if (CommandCreators.TryGetValue(commandString, out var creator))
-                    commands.Add(creator(parameterDict));
+                {
+                    var command = creator(parameterDict);
+                    command.Id = _currentCommandIndex;
+                    commands.Add(command);
+                }
                 else
-                    Debug.Log($"Command {commandString} not found");
+                {
+                    Debug.Log($"Line {rowIndex} 找不到指令: {_currentCommandIndex}");
+                }
             }
 
             return commands;
@@ -107,12 +117,10 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
-                new() { Name = "Key", Type = "string", CanBeEmpty = true }
+                new() { Name = "Key", Type = "string", CanBeEmpty = true },
+                new() { Name = "Text", Type = "string", CanBeEmpty = false }
             };
-            var command = new OptionCommand
-            {
-                Text = dict["Content"]
-            };
+            var command = new OptionCommand();
             OptionMenuCommandStack.Peek().Options.Add(command);
             SetProperties(command, propertyInfos, dict);
             return command;
@@ -125,7 +133,7 @@ namespace Again.Runtime.GoogleSheet
             {
                 var optionMenuCommand = OptionMenuCommandStack.Pop();
                 if (optionMenuCommand.Options.Count == 0)
-                    Debug.Log("OptionMenuEndCommand: 沒有新增選項");
+                    Debug.LogError("OptionMenuEndCommand: 沒有新增選項");
 
                 foreach (var option in optionMenuCommand.Options)
                 {
@@ -333,14 +341,12 @@ namespace Again.Runtime.GoogleSheet
             var propertyInfos = new List<PropertyInfo>
             {
                 new() { Name = "Character", Type = "string", CanBeEmpty = false },
+                new() { Name = "Text", Type = "string", CanBeEmpty = false },
                 new() { Name = "Voice", Type = "string", CanBeEmpty = true },
                 new() { Name = "Scale", Type = "float", CanBeEmpty = true },
                 new() { Name = "Key", Type = "string", CanBeEmpty = true }
             };
-            var command = new SayCommand
-            {
-                Text = dict["Content"]
-            };
+            var command = new SayCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -529,51 +535,62 @@ namespace Again.Runtime.GoogleSheet
                     if (propertyInfo.CanBeEmpty)
                         continue;
 
-                    Debug.LogError($" {command.GetType()} {propertyInfo.Name} can't be empty");
+                    Debug.LogError(
+                        $"Line {_currentCommandIndex} {command.GetType().Name.Replace("Command", "")} {propertyInfo.Name} 必填");
                     continue;
                 }
 
-                switch (propertyInfo.Type)
+                try
                 {
-                    case "string":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, stringValue);
-                        break;
-                    case "int":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, int.Parse(stringValue));
-                        break;
-                    case "float":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, float.Parse(stringValue));
-                        break;
-                    case "boolean":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, bool.Parse(stringValue));
-                        break;
-                    case "HideAnimationType":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
-                            command,
-                            Enum.Parse(typeof(HideAnimationType), stringValue)
-                        );
-                        break;
-                    case "ChangeColorType":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
-                            command,
-                            Enum.Parse(typeof(ChangeColorType), stringValue)
-                        );
-                        break;
-                    case "ShakeType":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
-                            command,
-                            Enum.Parse(typeof(ShakeType), stringValue)
-                        );
-                        break;
-                    case "ShowAnimationType":
-                        command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
-                            command,
-                            Enum.Parse(typeof(ShowAnimationType), stringValue)
-                        );
-                        break;
-                    default:
-                        Debug.LogError($"Type {propertyInfo.Type} not supported");
-                        break;
+                    switch (propertyInfo.Type)
+                    {
+                        case "string":
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, stringValue);
+                            break;
+                        case "int":
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, int.Parse(stringValue));
+                            break;
+                        case "float":
+                            var value = float.Parse(stringValue);
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(command, value);
+                            break;
+                        case "boolean":
+                            command.GetType().GetProperty(propertyInfo.Name)
+                                ?.SetValue(command, bool.Parse(stringValue));
+                            break;
+                        case "HideAnimationType":
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                                command,
+                                Enum.Parse(typeof(HideAnimationType), stringValue)
+                            );
+                            break;
+                        case "ChangeColorType":
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                                command,
+                                Enum.Parse(typeof(ChangeColorType), stringValue)
+                            );
+                            break;
+                        case "ShakeType":
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                                command,
+                                Enum.Parse(typeof(ShakeType), stringValue)
+                            );
+                            break;
+                        case "ShowAnimationType":
+                            command.GetType().GetProperty(propertyInfo.Name)?.SetValue(
+                                command,
+                                Enum.Parse(typeof(ShowAnimationType), stringValue)
+                            );
+                            break;
+                        default:
+                            Debug.LogError($"Type {propertyInfo.Type} not supported");
+                            break;
+                    }
+                }
+                catch (FormatException e)
+                {
+                    Debug.LogError(
+                        $"Line {_currentCommandIndex} {command.GetType().Name.Replace("Command", "")} {propertyInfo.Name} {stringValue} 格式錯誤");
                 }
             }
         }
