@@ -18,10 +18,10 @@ namespace Again.Runtime.GoogleSheet
 
         public SheetSelectView sheetSelectView;
 
-        private void Start()
+        private async void Start()
         {
-            _GetScriptPages();
-            _ImportTranslationPage();
+            await _GetScriptPages();
+            await _ImportTranslationPage();
         }
 
 

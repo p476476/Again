@@ -122,7 +122,7 @@ namespace Again.Scripts.Runtime.Components
                 {
                     spineAnimation.AnimationState.SetAnimation(0, command.Animation, command.IsLoop);
                 }
-                catch (Exception _)
+                catch (Exception)
                 {
                     Debug.LogError($"Line {command.Id} 找不到Animation: {command.Animation}");
                 }
@@ -133,7 +133,7 @@ namespace Again.Scripts.Runtime.Components
                     spineAnimation.skeleton.SetSkin(command.Skin);
                     spineAnimation.skeleton.SetToSetupPose();
                 }
-                catch (Exception _)
+                catch (Exception)
                 {
                     Debug.LogError($"Line {command.Id} 找不到Skin: {command.Skin}");
                 }

@@ -34,9 +34,9 @@ namespace Again.Runtime.GoogleSheet
             }
         }
 
-        private void OnClickPageButton(string page)
+        private async void OnClickPageButton(string page)
         {
-            importer.ImportPage(page);
+            await importer.ImportPage(page);
             animationContainer.Hide();
         }
     }

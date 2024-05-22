@@ -587,7 +587,7 @@ namespace Again.Runtime.GoogleSheet
                             break;
                     }
                 }
-                catch (FormatException e)
+                catch (FormatException)
                 {
                     Debug.LogError(
                         $"Line {_currentCommandIndex} {command.GetType().Name.Replace("Command", "")} {propertyInfo.Name} {stringValue} 格式錯誤");
