@@ -59,9 +59,8 @@ namespace Again.Scripts.Runtime.Components
             spineAnimation.skeletonDataAsset = spineInfos
                 .Find(info => info.spineName == command.SpineName)
                 .skeletonDataAsset;
-            spineAnimation.AnimationState.SetAnimation(0, command.Animation, command.IsLoop);
-            spineAnimation.skeleton.SetSkin(command.Skin);
-            spineAnimation.skeleton.SetToSetupPose();
+            _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
+            _SetSkin(spineAnimation, command.Skin, command.Id);
             _spineGameObjectDict.Add(command.SpineName, spineGameObject);
 
             var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;
@@ -128,26 +127,8 @@ namespace Again.Scripts.Runtime.Components
             }
 
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
-            if (!string.IsNullOrEmpty(command.Animation))
-                try
-                {
-                    spineAnimation.AnimationState.SetAnimation(0, command.Animation, command.IsLoop);
-                }
-                catch (Exception)
-                {
-                    Debug.LogError($"Line {command.Id} 找不到Animation: {command.Animation}");
-                }
-
-            if (!string.IsNullOrEmpty(command.Skin))
-                try
-                {
-                    spineAnimation.skeleton.SetSkin(command.Skin);
-                    spineAnimation.skeleton.SetToSetupPose();
-                }
-                catch (Exception)
-                {
-                    Debug.LogError($"Line {command.Id} 找不到Skin: {command.Skin}");
-                }
+            _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
+            _SetSkin(spineAnimation, command.Skin, command.Id);
 
             spineAnimation.ApplyAnimation();
         }
@@ -353,6 +334,37 @@ namespace Again.Scripts.Runtime.Components
             Destroy(go.gameObject);
             _spineGameObjectDict.Remove(key);
             onComplete?.Invoke();
+        }
+
+        private void _SetAnimation(SkeletonAnimation animation, string animationName, bool isLoop, int commandIndex)
+        {
+            if (string.IsNullOrEmpty(animationName))
+                return;
+
+            try
+            {
+                animation.AnimationState.SetAnimation(0, animationName, isLoop);
+            }
+            catch (Exception)
+            {
+                Debug.LogError($"Line {commandIndex} 找不到 Animation: {animationName}");
+            }
+        }
+
+        private void _SetSkin(SkeletonAnimation animation, string skinName, int commandIndex)
+        {
+            if (string.IsNullOrEmpty(skinName))
+                return;
+
+            try
+            {
+                animation.skeleton.SetSkin(skinName);
+                animation.skeleton.SetToSetupPose();
+            }
+            catch (Exception)
+            {
+                Debug.LogError($"Line {commandIndex} 找不到Skin: {skinName}");
+            }
         }
     }
 }
