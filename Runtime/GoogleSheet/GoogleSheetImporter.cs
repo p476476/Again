@@ -54,6 +54,12 @@ namespace Again.Runtime.GoogleSheet
             AgainSystem.Instance.DialogueManager.SetLocaleDict(dict);
         }
 
+        public async Task Reload()
+        {
+            await _GetScriptPages();
+            await _ImportTranslationPage();
+        }
+
         private async Task _GetScriptPages()
         {
             var url = string.Format(URLFormat, sheetID, PageListSheetName);

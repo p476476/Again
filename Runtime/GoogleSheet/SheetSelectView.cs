@@ -12,10 +12,16 @@ namespace Again.Runtime.GoogleSheet
         public RectTransform buttonContainer;
         public GoogleSheetImporter importer;
         public GameObject buttonPrefab;
+        public UIButton reloadButton;
 
         public void Start()
         {
             Show();
+            reloadButton.onClickEvent.AddListener(() =>
+            {
+                foreach (Transform child in buttonContainer.transform) Destroy(child.gameObject);
+                importer.Reload();
+            });
         }
 
         public void Show()
@@ -30,7 +36,9 @@ namespace Again.Runtime.GoogleSheet
                 var button = Instantiate(buttonPrefab, buttonContainer);
 
                 button.GetComponentInChildren<Text>().text = page;
-                button.GetComponent<UIButton>().onClickEvent.AddListener(() => OnClickPageButton(page));
+                button
+                    .GetComponent<UIButton>()
+                    .onClickEvent.AddListener(() => OnClickPageButton(page));
             }
         }
 
