@@ -323,7 +323,7 @@ namespace Again.Runtime.GoogleSheet
             var propertyInfos = new List<PropertyInfo>
             {
                 new() { Name = "Animation", Type = "string", CanBeEmpty = false },
-                new() { Name = "Skin", Type = "string", CanBeEmpty = false },
+                new() { Name = "Skin", Type = "string", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosY", Type = "float", CanBeEmpty = true },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
