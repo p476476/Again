@@ -41,6 +41,13 @@ namespace Again.Scripts.Runtime
 
         public void RunCommands(List<Command> commands)
         {
+            if (commands.Count == 0)
+            {
+                Debug.Log("腳本沒有任何指令");
+                OnCommandsFinished?.Invoke();
+                return;
+            }
+
             _commands = commands;
             _currentCommandIndex = -1;
             NextCommand();
