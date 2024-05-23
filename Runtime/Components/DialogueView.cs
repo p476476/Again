@@ -5,6 +5,7 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Again.Scripts.Runtime.Components
@@ -18,25 +19,33 @@ namespace Again.Scripts.Runtime.Components
 
     public class DialogueView : MonoBehaviour
     {
+        private const float SpeedUpScale = 5;
         public Text characterText;
         public Text dialogueText;
         public Button nextButton;
-        public float textSpeed = 0.1f;
+        public float textSpeed = 0.01f;
         public int textSize = 50;
         public bool isAutoNext;
         public Sprite waitSprite;
         public Sprite nextSprite;
         public Image stateIcon;
 
+        [SerializeField] private InputActionAsset actionAsset;
+
         private UIContainer _container;
         private Action _onComplete;
+        private InputAction _speedUpAction;
         private TweenerCore<string, string, StringOptions> _textAnim;
         private TextAnimationState _textAnimationState;
+        private float _textSpeedScale = 1f;
 
         private void Awake()
         {
             _container = GetComponent<UIContainer>();
             nextButton.onClick.AddListener(_OnClickNextButton);
+            _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
+            _speedUpAction.performed += OnTextSpeedUp;
+            _speedUpAction.canceled += OnTextSpeedUpCanceled;
         }
 
         public void Reset()
@@ -49,6 +58,16 @@ namespace Again.Scripts.Runtime.Components
             _textAnimationState = TextAnimationState.Wait;
         }
 
+        public void OnEnable()
+        {
+            _speedUpAction.Enable();
+        }
+
+        public void OnDisable()
+        {
+            _speedUpAction.Disable();
+        }
+
         public void ScaleText(float scale)
         {
             dialogueText.fontSize = (int)(textSize * scale);
@@ -59,18 +78,19 @@ namespace Again.Scripts.Runtime.Components
             if (_container.isHidden)
                 _container.Show();
 
-            if (_textAnim != null) _textAnim.Kill();
+            if (_textAnim != null)
+                _textAnim.Kill();
 
             _onComplete = onComplete;
             characterText.text = character;
             dialogueText.text = "";
             _textAnim = dialogueText
-                .DOText(text, text.Length * textSpeed)
+                .DOText(text, text.Length * textSpeed / _textSpeedScale)
                 .OnComplete(() =>
                 {
                     stateIcon.sprite = nextSprite;
                     _textAnimationState = TextAnimationState.Complete;
-                    if (isAutoNext)
+                    if (isAutoNext || _textSpeedScale > 1)
                     {
                         _textAnimationState = TextAnimationState.Wait;
                         _onComplete?.Invoke();
@@ -85,12 +105,19 @@ namespace Again.Scripts.Runtime.Components
             _container.Hide();
         }
 
+        public void SpeedUpText()
+        {
+            if (_textAnim != null)
+                _textAnim.timeScale = 10;
+        }
+
         public void SetCharacterAndText(string character, string text)
         {
             if (_container.isHidden)
                 return;
 
-            if (_textAnim != null) _textAnim.Kill(true);
+            if (_textAnim != null)
+                _textAnim.Kill(true);
             characterText.text = character;
             dialogueText.text = text;
         }
@@ -151,6 +178,26 @@ namespace Again.Scripts.Runtime.Components
             {
                 _textAnim.Complete();
             }
+        }
+
+        private void OnTextSpeedUp(InputAction.CallbackContext obj)
+        {
+            if (_textAnim != null)
+                _textAnim.timeScale = SpeedUpScale;
+            _textSpeedScale = SpeedUpScale;
+
+            if (_textAnimationState == TextAnimationState.Complete)
+            {
+                _textAnimationState = TextAnimationState.Wait;
+                _onComplete?.Invoke();
+            }
+        }
+
+        private void OnTextSpeedUpCanceled(InputAction.CallbackContext obj)
+        {
+            if (_textAnim != null)
+                _textAnim.timeScale = 1;
+            _textSpeedScale = 1;
         }
     }
 }

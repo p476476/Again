@@ -1,0 +1,34 @@
+{
+    "name": "AgainInputActionMap",
+    "maps": [
+        {
+            "name": "Dialogue",
+            "id": "75dd20d6-968f-4768-b722-5537a95b2ad9",
+            "actions": [
+                {
+                    "name": "SpeedUpText",
+                    "type": "Button",
+                    "id": "bff64312-41d0-4e9b-a0d3-72bf9c9836e4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7e0af146-2b16-4dc5-b933-891ffff5a144",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "Press(behavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpeedUpText",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
