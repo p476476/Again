@@ -55,8 +55,6 @@ namespace Again.Scripts.Runtime.Components
                 0
             );
 
-            Debug.Log(sprite.rect.width + " " + sprite.rect.height);
-
             _imageObjectDict.Add(command.Name, go);
 
             switch (command.ShowType)
