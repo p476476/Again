@@ -20,6 +20,17 @@ namespace Again.Scripts.Runtime.Components
             foreach (var button in _optionButtons) button.gameObject.SetActive(false);
         }
 
+        public void Reset()
+        {
+            _container.InstantHide();
+            foreach (var button in _optionButtons)
+            {
+                button.onClickEvent.RemoveAllListeners();
+                button.gameObject.SetActive(false);
+                button.GetComponentInChildren<Text>().text = "";
+            }
+        }
+
         public void UpdateOptionTexts(List<string> options)
         {
             if (_container.isHidden) return;

@@ -15,6 +15,12 @@ namespace Again.Scripts.Runtime.Components
         public GameObject imagePrefab;
         private readonly Dictionary<string, GameObject> _imageObjectDict = new();
 
+        public void Reset()
+        {
+            foreach (var go in _imageObjectDict.Values) Destroy(go);
+            _imageObjectDict.Clear();
+        }
+
         public GameObject GetImageObject(string objectName)
         {
             _imageObjectDict.TryGetValue(objectName, out var go);

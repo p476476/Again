@@ -39,6 +39,16 @@ namespace Again.Scripts.Runtime.Components
             nextButton.onClick.AddListener(_OnClickNextButton);
         }
 
+        public void Reset()
+        {
+            _container.InstantHide();
+            _textAnim?.Kill();
+            characterText.text = "";
+            dialogueText.text = "";
+            stateIcon.sprite = waitSprite;
+            _textAnimationState = TextAnimationState.Wait;
+        }
+
         public void ScaleText(float scale)
         {
             dialogueText.fontSize = (int)(textSize * scale);

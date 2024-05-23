@@ -32,6 +32,17 @@ namespace Again.Scripts.Runtime.Components
             _spineGameObjectDict = new Dictionary<string, GameObject>();
         }
 
+        public void Reset()
+        {
+            foreach (var entry in _spineGameObjectDict)
+            {
+                var go = entry.Value;
+                Destroy(go);
+            }
+
+            _spineGameObjectDict.Clear();
+        }
+
         public GameObject GetSpineObject(string spineName)
         {
             return _spineGameObjectDict[spineName];

@@ -55,6 +55,10 @@ namespace Again.Scripts.Runtime
                 return;
             }
 
+            CameraManager.Reset();
+            SpineManager.Reset();
+            ImageManager.Reset();
+            DialogueManager.Reset();
             DialogueManager.Hide();
             OnCommandsFinished?.Invoke();
         }

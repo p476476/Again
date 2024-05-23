@@ -17,6 +17,12 @@ namespace Again.Scripts.Runtime.Components
 
         private Dictionary<string, List<string>> _localeDict = new();
 
+        public void Reset()
+        {
+            dialogueView.Reset();
+            optionMenuView.Reset();
+        }
+
         public void ShowDialogue(SayCommand command, Action onComplete = null)
         {
             var text = _GetTextString(command);

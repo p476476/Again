@@ -18,6 +18,11 @@ namespace Again.Scripts.Runtime.Components
             _originalPosition = _mainCamera.transform.position;
         }
 
+        public void Reset()
+        {
+            _mainCamera.transform.position = _originalPosition;
+        }
+
         public void Shake(ShakeCameraCommand command, Action onComplete = null)
         {
             var cameraTransform = _mainCamera.transform;
