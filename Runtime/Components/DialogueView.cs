@@ -31,6 +31,7 @@ namespace Again.Scripts.Runtime.Components
         public Image stateIcon;
 
         [SerializeField] private InputActionAsset actionAsset;
+        private AudioSource _audioSource;
 
         private UIContainer _container;
         private Action _onComplete;
@@ -46,6 +47,7 @@ namespace Again.Scripts.Runtime.Components
             _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
             _speedUpAction.performed += OnTextSpeedUp;
             _speedUpAction.canceled += OnTextSpeedUpCanceled;
+            _audioSource = GetComponent<AudioSource>();
         }
 
         public void Reset()
@@ -84,6 +86,7 @@ namespace Again.Scripts.Runtime.Components
             _onComplete = onComplete;
             characterText.text = character;
             dialogueText.text = "";
+            _audioSource.Play();
             _textAnim = dialogueText
                 .DOText(text, text.Length * textSpeed / _textSpeedScale)
                 .OnComplete(() =>
