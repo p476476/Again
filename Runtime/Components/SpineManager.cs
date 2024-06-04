@@ -20,6 +20,7 @@ namespace Again.Scripts.Runtime.Components
     public class SpineManager : MonoBehaviour
     {
         private const float ShakeFactor = 0.5f;
+        private const float PhysicsFactor = 1f;
         public GameObject spineGameObjectPrefab;
         public GameObject spineView;
 
@@ -56,6 +57,8 @@ namespace Again.Scripts.Runtime.Components
             spineGameObject.name = command.SpineName;
 
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
+            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+            spineAnimation.PhysicsRotationInheritanceFactor = PhysicsFactor;
             spineAnimation.skeletonDataAsset = spineInfos
                 .Find(info => info.spineName == command.SpineName)
                 .skeletonDataAsset;
@@ -101,18 +104,28 @@ namespace Again.Scripts.Runtime.Components
                         .OnComplete(() => onComplete?.Invoke());
                     break;
                 case ShowAnimationType.SlideFromLeft:
+                    spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
                     var pos = spineRT.localPosition;
                     spineRT.localPosition = new Vector3(-parentWidth / 2, pos.y, pos.z);
                     spineRT
                         .DOLocalMoveX(pos.x, command.Duration)
-                        .OnComplete(() => onComplete?.Invoke());
+                        .OnComplete(() =>
+                        {
+                            onComplete?.Invoke();
+                            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+                        });
                     break;
                 case ShowAnimationType.SlideFromRight:
+                    spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
                     pos = spineRT.localPosition;
                     spineRT.localPosition = new Vector3(parentWidth / 2, pos.y, pos.z);
                     spineRT.transform
                         .DOLocalMoveX(pos.x, command.Duration)
-                        .OnComplete(() => onComplete?.Invoke());
+                        .OnComplete(() =>
+                        {
+                            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+                            onComplete?.Invoke();
+                        });
                     break;
             }
         }
@@ -163,18 +176,28 @@ namespace Again.Scripts.Runtime.Components
                         .OnComplete(() => _RemoveSpineAnimation(command.SpineName, onComplete));
                     break;
                 case HideAnimationType.SlideToLeft:
+                    spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
                     goRT.DOLocalMoveX(
                             -spineView.GetComponent<RectTransform>().rect.width / 2,
                             command.Duration
                         )
-                        .OnComplete(() => _RemoveSpineAnimation(command.SpineName, onComplete));
+                        .OnComplete(() =>
+                        {
+                            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+                            _RemoveSpineAnimation(command.SpineName, onComplete);
+                        });
                     break;
                 case HideAnimationType.SlideToRight:
+                    spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
                     goRT.DOLocalMoveX(
                             spineView.GetComponent<RectTransform>().rect.width / 2,
                             command.Duration
                         )
-                        .OnComplete(() => _RemoveSpineAnimation(command.SpineName, onComplete));
+                        .OnComplete(() =>
+                        {
+                            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+                            _RemoveSpineAnimation(command.SpineName, onComplete);
+                        });
                     break;
             }
         }
@@ -188,13 +211,20 @@ namespace Again.Scripts.Runtime.Components
                 return;
             }
 
+            var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
+            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
+
             var parentWidth = spineView.GetComponent<RectTransform>().rect.width;
             go.GetComponent<RectTransform>()
                 .DOLocalMove(
                     new Vector3(command.PosX * parentWidth / 2, command.PosY * parentWidth / 2, 0),
                     command.Duration
                 )
-                .OnComplete(() => onComplete?.Invoke());
+                .OnComplete(() =>
+                {
+                    spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one;
+                    onComplete?.Invoke();
+                });
         }
 
         public void Scale(ScaleSpineCommand command, Action onComplete = null)
@@ -209,11 +239,18 @@ namespace Again.Scripts.Runtime.Components
             var goRT = go.GetComponent<RectTransform>();
             PivotTool.SetPivotInWorldSpace(goRT, new Vector2(command.AnchorX, command.AnchorY));
 
+            var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
+            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
+
             goRT.DOScale(
                     new Vector3(command.Scale, command.Scale, 1),
                     command.Duration
                 )
-                .OnComplete(() => onComplete?.Invoke());
+                .OnComplete(() =>
+                {
+                    onComplete?.Invoke();
+                    spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+                });
         }
 
         public void Jump(JumpSpineCommand command, Action onComplete = null)
