@@ -3,7 +3,7 @@ namespace Again.Scripts.Runtime.Commands.Image
     public class JumpImageCommand : Command
     {
         public string Name { get; set; }
-        public float Duration { get; set; } = 1f;
+        public float Duration { get; set; } = 0.5f;
         public float JumpPower { get; set; } = 100f;
         public int JumpCount { get; set; } = 1;
 
