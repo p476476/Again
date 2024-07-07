@@ -150,7 +150,7 @@ namespace Again.Scripts.Runtime.Components
 
         public void Hide(HideSpineCommand command, Action onComplete = null)
         {
-            var go = _spineGameObjectDict[command.SpineName];
+            _spineGameObjectDict.TryGetValue(command.SpineName, out var go);
             if (go == null)
             {
                 Debug.LogError("Spine not found: " + command.SpineName);

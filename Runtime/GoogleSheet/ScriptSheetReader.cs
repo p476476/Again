@@ -30,6 +30,7 @@ namespace Again.Runtime.GoogleSheet
                 { "ShakeCamera", CreateShakeCameraCommand },
                 { "Say", CreateSayCommand },
                 { "ShakeDialogue", CreateShakeDialogueCommand },
+                { "HideDialogue", CreateHideDialogueCommand },
                 { "ChangeSpineColor", CreateChangeSpineColorCommand },
                 { "ChangeSpine", CreateChangeSpineCommand },
                 { "HideSpine", CreateHideSpineCommand },
@@ -55,6 +56,7 @@ namespace Again.Runtime.GoogleSheet
                 { "Option", CreateOptionCommand },
                 { "LookAtImage", CreateLookAtImageCommand }
             };
+
 
         public static List<Command> Read(List<string> rows)
         {
@@ -536,6 +538,12 @@ namespace Again.Runtime.GoogleSheet
             };
             var command = new ShakeDialogueCommand();
             SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateHideDialogueCommand(Dictionary<string, string> arg)
+        {
+            var command = new HideDialogueCommand();
             return command;
         }
 

@@ -86,7 +86,8 @@ namespace Again.Scripts.Runtime.Components
             _onComplete = onComplete;
             characterText.text = character;
             dialogueText.text = "";
-            _audioSource.Play();
+            if (_audioSource.gameObject.activeSelf)
+                _audioSource.Play();
             _textAnim = dialogueText
                 .DOText(text, text.Length * textSpeed / _textSpeedScale)
                 .OnComplete(() =>
