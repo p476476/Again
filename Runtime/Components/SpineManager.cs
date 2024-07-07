@@ -15,6 +15,8 @@ namespace Again.Scripts.Runtime.Components
         [SerializeField] public string spineName;
 
         [SerializeField] public SkeletonDataAsset skeletonDataAsset;
+
+        [SerializeField] public Vector2 pivot = new(0.5f, 0.5f);
     }
 
     public class SpineManager : MonoBehaviour
@@ -59,9 +61,9 @@ namespace Again.Scripts.Runtime.Components
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
             spineAnimation.PhysicsRotationInheritanceFactor = PhysicsFactor;
-            spineAnimation.skeletonDataAsset = spineInfos
-                .Find(info => info.spineName == command.SpineName)
-                .skeletonDataAsset;
+
+            var spineInfo = spineInfos.Find(info => info.spineName == command.SpineName);
+            spineAnimation.skeletonDataAsset = spineInfo.skeletonDataAsset;
             _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
             _SetSkin(spineAnimation, command.Skin, command.Id);
             _spineGameObjectDict.Add(command.SpineName, spineGameObject);
@@ -82,8 +84,8 @@ namespace Again.Scripts.Runtime.Components
             );
             spineRT.localScale = new Vector3(command.Scale, command.Scale, 1);
             spineAnimation.GetComponent<RectTransform>().localPosition = new Vector3(
-                0,
-                -spineHeight * spineScale / 2,
+                spineWidth * spineScale * (spineInfo.pivot.x - 0.5f),
+                spineHeight * spineScale * (spineInfo.pivot.y - 0.5f),
                 0
             );
 
