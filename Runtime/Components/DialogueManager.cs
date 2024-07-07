@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Commands.OptionMenu;
 using Again.Scripts.Runtime.Enums;
+using Doozy.Runtime.UIManager.Components;
 using UnityEngine;
 
 namespace Again.Scripts.Runtime.Components
@@ -10,38 +11,62 @@ namespace Again.Scripts.Runtime.Components
     public class DialogueManager : MonoBehaviour
     {
         public DialogueView dialogueView;
+        public UIToggle visibleToggle;
         public OptionMenuView optionMenuView;
+        private readonly List<GameObject> _currentViewObjects = new();
         private Language _currentLanguage = Language.Chinese;
         private OptionMenuCommand _currentOptionMenuCommand;
         private SayCommand _currentSayCommand;
 
         private Dictionary<string, List<string>> _localeDict = new();
 
+        private void Awake()
+        {
+            visibleToggle.OnValueChangedCallback.AddListener(OnVisibleToggleValueChanged);
+        }
+
         public void Reset()
         {
             dialogueView.Reset();
             optionMenuView.Reset();
+            visibleToggle.gameObject.SetActive(false);
+            _currentViewObjects.Clear();
+        }
+
+        private void OnVisibleToggleValueChanged(bool isOn)
+        {
+            foreach (var viewObject in _currentViewObjects) viewObject.SetActive(isOn);
         }
 
         public void ShowDialogue(SayCommand command, Action onComplete = null)
         {
+            var callback = new Action(() => { onComplete?.Invoke(); });
+
             var text = _GetTextString(command);
             var character = _GetCharacterString(command);
 
             _currentSayCommand = command;
             dialogueView.ScaleText(command.Scale);
-            dialogueView.Show(character, text, onComplete);
+            dialogueView.Show(character, text, callback);
+            _OnViewOpen(dialogueView.gameObject);
             if (command.Voice != null) Debug.Log("Voice: " + command.Voice);
         }
 
         public void ShowOptionMenu(OptionMenuCommand command, Action<int> onComplete)
         {
+            var callback = new Action<int>(index =>
+            {
+                _OnViewClose(optionMenuView.gameObject);
+                onComplete(index);
+            });
+
             var options = new List<string>();
             foreach (var option in command.Options)
                 options.Add(_GetOptionString(option));
 
             _currentOptionMenuCommand = command;
-            optionMenuView.Show(options, onComplete);
+            optionMenuView.Show(options, callback);
+            _OnViewOpen(optionMenuView.gameObject);
         }
 
         public void Shake(ShakeDialogueCommand command, Action onComplete = null)
@@ -78,6 +103,23 @@ namespace Again.Scripts.Runtime.Components
         public void SetLocaleDict(Dictionary<string, List<string>> localeDict)
         {
             _localeDict = localeDict;
+        }
+
+        public void _OnViewOpen(GameObject viewObject)
+        {
+            visibleToggle.SetIsOn(true);
+            visibleToggle.gameObject.SetActive(true);
+            _currentViewObjects.Add(viewObject);
+        }
+
+        public void _OnViewClose(GameObject viewObject)
+        {
+            _currentViewObjects.Remove(viewObject);
+            if (_currentViewObjects.Count == 0)
+            {
+                visibleToggle.SetIsOn(false);
+                visibleToggle.gameObject.SetActive(false);
+            }
         }
 
         private string _GetTextString(SayCommand command)
