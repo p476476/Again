@@ -4,40 +4,62 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Again.Scripts.Runtime;
+using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Enums;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Again.Runtime.GoogleSheet
 {
-    public class GoogleSheetImporter : MonoBehaviour
+    public class GoogleSheetImporter : ISheetImporter
     {
         private const string URLFormat = @"https://docs.google.com/spreadsheets/d/{0}/gviz/tq?tqx=out:csv&sheet={1}";
         private const string PageListSheetName = "Config";
         private const string TranslationSheetName = "Translation";
-        public string sheetID = "1dNdvKzT7IZryEIou0suLthyALAKxjj1Tf9NcbFznWzs";
+        private readonly string _sheetID;
 
-        public SheetSelectView sheetSelectView;
-
-        private async void Start()
+        public GoogleSheetImporter([CanBeNull] string sheetID)
         {
-            await _GetScriptPages();
-            await _ImportTranslationPage();
+            _sheetID = sheetID;
         }
 
-
-        public async Task ImportPage(string pageName)
+        public async Task<List<string>> LoadScripts()
         {
-            var url = string.Format(URLFormat, sheetID, pageName);
+            if (string.IsNullOrEmpty(_sheetID))
+                return new List<string>();
+
+            var url = string.Format(URLFormat, _sheetID, PageListSheetName);
+            var data = await FetchData(url);
+
+            var grid = _ParseCsv(data);
+
+            var pageNames = grid.Select(row => row[0]).ToList();
+            pageNames.RemoveAt(0);
+            pageNames.RemoveAll(string.IsNullOrEmpty);
+
+            return pageNames;
+        }
+
+        public async Task<List<Command>> LoadScript(string scriptName)
+        {
+            if (string.IsNullOrEmpty(_sheetID))
+                Debug.LogError("No sheet ID provided");
+
+            var url = string.Format(URLFormat, _sheetID, scriptName);
             var data = await FetchData(url);
             var lines = data.Split(",\"\"\n").ToList();
             var commands = ScriptSheetReader.Read(lines);
-            AgainSystem.Instance.RunCommands(commands);
+
+            return commands;
         }
 
 
-        private async Task _ImportTranslationPage()
+        public async Task<Dictionary<string, List<string>>> LoadTransition()
         {
-            var url = string.Format(URLFormat, sheetID, TranslationSheetName);
+            if (string.IsNullOrEmpty(_sheetID))
+                Debug.LogError("No sheet ID provided");
+
+            var url = string.Format(URLFormat, _sheetID, TranslationSheetName);
             var data = await FetchData(url);
             var lines = data.Split(",\"\"\n").ToList();
             var languageCount = Enum.GetNames(typeof(Language)).Length;
@@ -51,27 +73,7 @@ namespace Again.Runtime.GoogleSheet
                 dict[values[0]] = values.GetRange(2, languageCount).ToList();
             }
 
-            AgainSystem.Instance.DialogueManager.SetLocaleDict(dict);
-        }
-
-        public async Task Reload()
-        {
-            await _GetScriptPages();
-            await _ImportTranslationPage();
-        }
-
-        private async Task _GetScriptPages()
-        {
-            var url = string.Format(URLFormat, sheetID, PageListSheetName);
-            var data = await FetchData(url);
-
-            var grid = _ParseCsv(data);
-
-            var pageNames = grid.Select(row => row[0]).ToList();
-            pageNames.RemoveAt(0);
-            pageNames.RemoveAll(string.IsNullOrEmpty);
-
-            sheetSelectView.SetPages(pageNames);
+            return dict;
         }
 
         private List<List<string>> _ParseCsv(string csvStr)

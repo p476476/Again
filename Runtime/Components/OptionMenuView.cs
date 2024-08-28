@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Doozy.Runtime.UIManager.Components;
 using Doozy.Runtime.UIManager.Containers;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Again.Scripts.Runtime.Components
 {
@@ -27,7 +27,7 @@ namespace Again.Scripts.Runtime.Components
             {
                 button.onClickEvent.RemoveAllListeners();
                 button.gameObject.SetActive(false);
-                button.GetComponentInChildren<Text>().text = "";
+                button.GetComponentInChildren<TMP_Text>().text = "";
             }
         }
 
@@ -37,7 +37,7 @@ namespace Again.Scripts.Runtime.Components
             for (var i = 0; i < options.Count; i++)
             {
                 var optionButton = _optionButtons[i];
-                optionButton.GetComponentInChildren<Text>().text = options[i];
+                optionButton.GetComponentInChildren<TMP_Text>().text = options[i];
             }
         }
 
@@ -47,7 +47,7 @@ namespace Again.Scripts.Runtime.Components
             {
                 var optionButton = _optionButtons[i];
                 optionButton.gameObject.SetActive(true);
-                optionButton.GetComponentInChildren<Text>().text = options[i];
+                optionButton.GetComponentInChildren<TMP_Text>().text = options[i];
                 var optionId = i;
                 optionButton.GetComponentInChildren<UIButton>().onClickEvent.AddListener(() =>
                 {

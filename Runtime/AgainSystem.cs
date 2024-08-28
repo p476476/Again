@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using Again.Runtime.GoogleSheet;
 using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Components;
 using Again.Scripts.Runtime.Enums;
+using Again.Scripts.Runtime.LocalSheet;
 using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,18 +17,19 @@ namespace Again.Scripts.Runtime
         public UIContainer transferView;
 
         [SerializeField] public UnityEvent OnCommandsFinished = new();
+        public string googleSheetId;
 
         private List<Command> _commands;
         private int _currentCommandIndex = -1;
 
+        public ISheetImporter SheetImporter { get; private set; }
         public DialogueManager DialogueManager { get; private set; }
         public SpineManager SpineManager { get; private set; }
         public ImageManager ImageManager { get; private set; }
-
         public CameraManager CameraManager { get; private set; }
         public static AgainSystem Instance { get; private set; }
 
-        private void Awake()
+        private async void Awake()
         {
             if (Instance == null)
                 Instance = this;
@@ -37,6 +40,22 @@ namespace Again.Scripts.Runtime
             SpineManager = GetComponent<SpineManager>();
             CameraManager = GetComponent<CameraManager>();
             ImageManager = GetComponent<ImageManager>();
+            if (googleSheetId != null)
+                SheetImporter = new GoogleSheetImporter(googleSheetId);
+            else
+                SheetImporter = new LocalSheetImporter();
+            DialogueManager.SetLocaleDict(await SheetImporter.LoadTransition());
+        }
+
+        [ContextMenu("Test")]
+        public void Test()
+        {
+            Execute("test1");
+        }
+
+        public async void Execute(string scriptName)
+        {
+            RunCommands(await SheetImporter.LoadScript(scriptName));
         }
 
         public void RunCommands(List<Command> commands)

@@ -1,6 +1,8 @@
-using System.Collections.Generic;
+using Again.Scripts.Runtime;
+using Doozy.Runtime.Common.Extensions;
 using Doozy.Runtime.UIManager.Components;
 using Doozy.Runtime.UIManager.Containers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,31 +12,32 @@ namespace Again.Runtime.GoogleSheet
     {
         public UIContainer animationContainer;
         public RectTransform buttonContainer;
-        public GoogleSheetImporter importer;
         public GameObject buttonPrefab;
-        public UIButton reloadButton;
+        public TMP_Text titleText;
 
         public void Start()
         {
             Show();
-            reloadButton.onClickEvent.AddListener(() =>
-            {
-                foreach (Transform child in buttonContainer.transform) Destroy(child.gameObject);
-                importer.Reload();
-            });
+            titleText.text = AgainSystem.Instance.SheetImporter is GoogleSheetImporter ? "遠端腳本" : "本地腳本";
+            AgainSystem.Instance.OnCommandsFinished.AddListener(Show);
         }
 
         public void Show()
         {
             animationContainer.Show();
+            UpdatePages();
         }
 
-        public void SetPages(List<string> pages)
+        public async void UpdatePages()
         {
+            buttonContainer.DestroyChildren();
+
+            var pages = await AgainSystem.Instance.SheetImporter.LoadScripts();
             foreach (var page in pages)
             {
                 var button = Instantiate(buttonPrefab, buttonContainer);
 
+                button.SetActive(true);
                 button.GetComponentInChildren<Text>().text = page;
                 button
                     .GetComponent<UIButton>()
@@ -46,7 +49,7 @@ namespace Again.Runtime.GoogleSheet
         {
             async void Call()
             {
-                await importer.ImportPage(page);
+                AgainSystem.Instance.Execute(page);
                 animationContainer.OnHiddenCallback.Event.RemoveAllListeners();
             }
 

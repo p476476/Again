@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Commands.OptionMenu;
 using Again.Scripts.Runtime.Enums;
-using Doozy.Runtime.UIManager.Components;
 using UnityEngine;
 
 namespace Again.Scripts.Runtime.Components
@@ -11,7 +10,6 @@ namespace Again.Scripts.Runtime.Components
     public class DialogueManager : MonoBehaviour
     {
         public DialogueView dialogueView;
-        public UIToggle visibleToggle;
         public OptionMenuView optionMenuView;
         private readonly List<GameObject> _currentViewObjects = new();
         private Language _currentLanguage = Language.Chinese;
@@ -20,22 +18,16 @@ namespace Again.Scripts.Runtime.Components
 
         private Dictionary<string, List<string>> _localeDict = new();
 
-        private void Awake()
-        {
-            visibleToggle.OnValueChangedCallback.AddListener(OnVisibleToggleValueChanged);
-        }
-
         public void Reset()
         {
             dialogueView.Reset();
             optionMenuView.Reset();
-            visibleToggle.gameObject.SetActive(false);
             _currentViewObjects.Clear();
         }
 
-        private void OnVisibleToggleValueChanged(bool isOn)
+        private void SetViewVisible(bool isVisible)
         {
-            foreach (var viewObject in _currentViewObjects) viewObject.SetActive(isOn);
+            foreach (var viewObject in _currentViewObjects) viewObject.SetActive(isVisible);
         }
 
         public void ShowDialogue(SayCommand command, Action onComplete = null)
@@ -107,19 +99,12 @@ namespace Again.Scripts.Runtime.Components
 
         public void _OnViewOpen(GameObject viewObject)
         {
-            visibleToggle.SetIsOn(true);
-            visibleToggle.gameObject.SetActive(true);
             _currentViewObjects.Add(viewObject);
         }
 
         public void _OnViewClose(GameObject viewObject)
         {
             _currentViewObjects.Remove(viewObject);
-            if (_currentViewObjects.Count == 0)
-            {
-                visibleToggle.SetIsOn(false);
-                visibleToggle.gameObject.SetActive(false);
-            }
         }
 
         private string _GetTextString(SayCommand command)
@@ -130,7 +115,7 @@ namespace Again.Scripts.Runtime.Components
                 if (_localeDict.TryGetValue(command.Key, out var translations))
                     text = translations[(int)_currentLanguage];
                 else
-                    Debug.LogError("Key not found: " + command.Key);
+                    Debug.Log("Translation key not found: " + command.Key);
             }
 
             return text;

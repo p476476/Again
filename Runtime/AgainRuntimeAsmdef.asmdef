@@ -5,10 +5,11 @@
         "Unity.TextMeshPro",
         "spine-unity",
         "spine-csharp",
-        "DoozyRuntime",
         "DOTweenPro.Scripts",
         "DOTween.Modules",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "DoozyRuntimeAdmdef",
+        "DoozyRuntime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

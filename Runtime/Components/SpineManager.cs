@@ -53,6 +53,13 @@ namespace Again.Scripts.Runtime.Components
 
         public void Show(ShowSpineCommand command, Action onComplete = null)
         {
+            var spineInfo = spineInfos.Find(info => info.spineName == command.SpineName);
+            if (spineInfo == null)
+            {
+                Debug.LogError("Spine not found: " + command.SpineName);
+                return;
+            }
+
             var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
             var parentWidth = spineView.GetComponent<RectTransform>().rect.width;
 
@@ -62,7 +69,6 @@ namespace Again.Scripts.Runtime.Components
             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
             spineAnimation.PhysicsRotationInheritanceFactor = PhysicsFactor;
 
-            var spineInfo = spineInfos.Find(info => info.spineName == command.SpineName);
             spineAnimation.skeletonDataAsset = spineInfo.skeletonDataAsset;
             _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
             _SetSkin(spineAnimation, command.Skin, command.Id);
