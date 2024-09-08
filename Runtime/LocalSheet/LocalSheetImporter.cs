@@ -46,6 +46,7 @@ namespace Again.Scripts.Runtime.LocalSheet
             for (var i = 1; i < lines.Count; i++)
             {
                 var values = lines[i].Split("\t").ToList();
+                if (values.Count < 2) continue;
                 dict[values[0]] = values.GetRange(2, values.Count - 2).ToList();
             }
 

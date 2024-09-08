@@ -48,6 +48,7 @@ namespace Again.Runtime.GoogleSheet
             var url = string.Format(URLFormat, _sheetID, scriptName);
             var data = await FetchData(url);
             var lines = data.Split(",\"\"\n").ToList();
+            lines.RemoveAt(0);
             var data2D = new List<List<string>>();
             foreach (var line in lines)
             {

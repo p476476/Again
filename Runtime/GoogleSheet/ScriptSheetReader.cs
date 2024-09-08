@@ -61,7 +61,6 @@ namespace Again.Runtime.GoogleSheet
         {
             commands = new List<Command>();
             OptionMenuCommandStack.Clear();
-            data.RemoveAt(0); // 移除標題列
             for (var rowIndex = 0; rowIndex < data.Count; rowIndex++)
             {
                 var values = data[rowIndex];
