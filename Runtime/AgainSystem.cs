@@ -45,6 +45,7 @@ namespace Again.Scripts.Runtime
             else
                 SheetImporter = new GoogleSheetImporter(googleSheetId);
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
+            EventManager.On<List<string>>("test", Test);
         }
 
         [ContextMenu("Test")]
@@ -96,9 +97,9 @@ namespace Again.Scripts.Runtime
             NextCommand();
         }
 
-        public void SetLanguage(int languageId)
+        public void SetLanguage(Language language)
         {
-            DialogueManager.SetLanguage((Language)languageId);
+            DialogueManager.SetLanguage(language);
         }
 
         public void SetLocaleDict(Dictionary<string, List<string>> dict)
