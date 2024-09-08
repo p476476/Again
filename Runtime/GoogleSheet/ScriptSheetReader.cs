@@ -53,7 +53,8 @@ namespace Again.Runtime.GoogleSheet
                 { "OptionMenu", CreateOptionMenuCommand },
                 { "OptionMenuEnd", CreateOptionMenuEndCommand },
                 { "Option", CreateOptionCommand },
-                { "LookAtImage", CreateLookAtImageCommand }
+                { "LookAtImage", CreateLookAtImageCommand },
+                { "Emit", CreateEmitCommand }
             };
 
 
@@ -533,6 +534,28 @@ namespace Again.Runtime.GoogleSheet
             };
             var command = new MoveBackCameraCommand();
             SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static Command CreateEmitCommand(Dictionary<string, string> arg)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false }
+            };
+
+            var command = new EmitCommand();
+            SetProperties(command, propertyInfos, arg);
+            var parameters = new List<string>();
+
+            var i = 1;
+            while (arg.TryGetValue($"Param{i}", out var param))
+            {
+                parameters.Add(param);
+                i++;
+            }
+
+            command.Parameters = parameters;
             return command;
         }
 

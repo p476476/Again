@@ -27,6 +27,7 @@ namespace Again.Scripts.Runtime
         public SpineManager SpineManager { get; private set; }
         public ImageManager ImageManager { get; private set; }
         public CameraManager CameraManager { get; private set; }
+        public EventManager EventManager { get; private set; }
         public static AgainSystem Instance { get; private set; }
 
         private async void Awake()
@@ -36,6 +37,7 @@ namespace Again.Scripts.Runtime
             else
                 Destroy(gameObject);
             _commands = new List<Command>();
+            EventManager = new EventManager();
             DialogueManager = GetComponent<DialogueManager>();
             SpineManager = GetComponent<SpineManager>();
             CameraManager = GetComponent<CameraManager>();
@@ -48,9 +50,10 @@ namespace Again.Scripts.Runtime
         }
 
         [ContextMenu("Test")]
-        public void Test()
+        public void Test(List<string> list)
         {
-            Execute("test1");
+            // Execute("test1");
+            foreach (var item in list) Debug.Log(item);
         }
 
         public async void Execute(string scriptName)
