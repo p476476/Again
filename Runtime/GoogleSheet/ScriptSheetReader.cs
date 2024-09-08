@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Commands.Camera;
@@ -58,18 +57,16 @@ namespace Again.Runtime.GoogleSheet
             };
 
 
-        public static List<Command> Read(List<string> rows)
+        public static List<Command> Read(List<List<string>> data)
         {
             commands = new List<Command>();
             OptionMenuCommandStack.Clear();
-            rows.RemoveAt(0); // 移除標題列
-            for (var rowIndex = 0; rowIndex < rows.Count; rowIndex++)
+            data.RemoveAt(0); // 移除標題列
+            for (var rowIndex = 0; rowIndex < data.Count; rowIndex++)
             {
-                var rowData = rows[rowIndex];
+                var values = data[rowIndex];
+                if (values.Count < 3) continue;
                 _currentCommandIndex = rowIndex + 2;
-                // 拆分資料
-                var rowString = rowData.Trim('"');
-                var values = rowString.Split("\",\"").ToList();
 
                 var commandString = values[0];
                 var parameterDict = new Dictionary<string, string>();

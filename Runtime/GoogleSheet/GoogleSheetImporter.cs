@@ -48,13 +48,20 @@ namespace Again.Runtime.GoogleSheet
             var url = string.Format(URLFormat, _sheetID, scriptName);
             var data = await FetchData(url);
             var lines = data.Split(",\"\"\n").ToList();
-            var commands = ScriptSheetReader.Read(lines);
+            var data2D = new List<List<string>>();
+            foreach (var line in lines)
+            {
+                var rowString = line.Trim('"');
+                data2D.Add(rowString.Split("\",\"").ToList());
+            }
+
+            var commands = ScriptSheetReader.Read(data2D);
 
             return commands;
         }
 
 
-        public async Task<Dictionary<string, List<string>>> LoadTransition()
+        public async Task<Dictionary<string, List<string>>> LoadTranslation()
         {
             if (string.IsNullOrEmpty(_sheetID))
                 Debug.LogError("No sheet ID provided");

@@ -40,11 +40,11 @@ namespace Again.Scripts.Runtime
             SpineManager = GetComponent<SpineManager>();
             CameraManager = GetComponent<CameraManager>();
             ImageManager = GetComponent<ImageManager>();
-            if (googleSheetId != null)
-                SheetImporter = new GoogleSheetImporter(googleSheetId);
-            else
+            if (string.IsNullOrEmpty(googleSheetId))
                 SheetImporter = new LocalSheetImporter();
-            DialogueManager.SetLocaleDict(await SheetImporter.LoadTransition());
+            else
+                SheetImporter = new GoogleSheetImporter(googleSheetId);
+            DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
         }
 
         [ContextMenu("Test")]

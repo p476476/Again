@@ -8,6 +8,6 @@ namespace Again.Scripts.Runtime
     {
         public Task<List<string>> LoadScripts();
         public Task<List<Command>> LoadScript(string scriptName);
-        public Task<Dictionary<string, List<string>>> LoadTransition();
+        public Task<Dictionary<string, List<string>>> LoadTranslation();
     }
 }
