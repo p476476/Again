@@ -34,6 +34,7 @@ namespace Again.Scripts.Runtime.Components
             if (sprite == null)
             {
                 Debug.LogError($"Texture {command.ImageName} not found");
+                onComplete?.Invoke();
                 return;
             }
 
@@ -107,6 +108,7 @@ namespace Again.Scripts.Runtime.Components
             if (go == null)
             {
                 Debug.LogError($"Sprite object {command.Name} not found");
+                onComplete?.Invoke();
                 return;
             }
 
@@ -153,6 +155,7 @@ namespace Again.Scripts.Runtime.Components
             if (go == null)
             {
                 Debug.LogError($"Sprite object {command.Name} not found");
+                onComplete?.Invoke();
                 return;
             }
 
@@ -173,6 +176,7 @@ namespace Again.Scripts.Runtime.Components
             if (go == null)
             {
                 Debug.LogError($"Sprite object {command.Name} not found");
+                onComplete?.Invoke();
                 return;
             }
 
@@ -189,6 +193,7 @@ namespace Again.Scripts.Runtime.Components
             if (go == null)
             {
                 Debug.LogError($"Sprite object {command.Name} not found");
+                onComplete?.Invoke();
                 return;
             }
 
@@ -204,6 +209,7 @@ namespace Again.Scripts.Runtime.Components
             if (go == null)
             {
                 Debug.LogError($"Sprite object {command.Name} not found");
+                onComplete?.Invoke();
                 return;
             }
 

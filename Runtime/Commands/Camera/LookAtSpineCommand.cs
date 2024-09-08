@@ -17,7 +17,7 @@ namespace Again.Scripts.Runtime.Commands.Camera
             var go = spineManager.GetSpineObject(SpineName);
             if (go == null)
             {
-                Debug.LogError("Spine Object not found");
+                Debug.LogError("Spine not found: " + SpineName);
                 AgainSystem.Instance.NextCommand();
                 return;
             }
