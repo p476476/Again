@@ -17,7 +17,7 @@ namespace Again.Scripts.Runtime.Components
         Complete
     }
 
-    public class DialogueView : MonoBehaviour
+    public class DialogueView : MonoBehaviour, IDialogueView
     {
         private const float SpeedUpScale = 5;
         public Text characterText;
@@ -29,6 +29,7 @@ namespace Again.Scripts.Runtime.Components
         public Sprite waitSprite;
         public Sprite nextSprite;
         public Image stateIcon;
+        public GameObject visibleContainer;
 
         [SerializeField] private InputActionAsset actionAsset;
         private AudioSource _audioSource;
@@ -50,16 +51,6 @@ namespace Again.Scripts.Runtime.Components
             _audioSource = GetComponent<AudioSource>();
         }
 
-        public void Reset()
-        {
-            _container.InstantHide();
-            _textAnim?.Kill();
-            characterText.text = "";
-            dialogueText.text = "";
-            stateIcon.sprite = waitSprite;
-            _textAnimationState = TextAnimationState.Wait;
-        }
-
         public void OnEnable()
         {
             _speedUpAction.Enable();
@@ -70,12 +61,22 @@ namespace Again.Scripts.Runtime.Components
             _speedUpAction.Disable();
         }
 
+        public void Reset()
+        {
+            _container.InstantHide();
+            _textAnim?.Kill();
+            characterText.text = "";
+            dialogueText.text = "";
+            stateIcon.sprite = waitSprite;
+            _textAnimationState = TextAnimationState.Wait;
+        }
+
         public void ScaleText(float scale)
         {
             dialogueText.fontSize = (int)(textSize * scale);
         }
 
-        public void Show(string character, string text, Action onComplete = null)
+        public void ShowText(string character, string text, Action onComplete = null)
         {
             if (_container.isHidden)
                 _container.Show();
@@ -109,10 +110,9 @@ namespace Again.Scripts.Runtime.Components
             _container.Hide();
         }
 
-        public void SpeedUpText()
+        public void SetVisible(bool isVisible)
         {
-            if (_textAnim != null)
-                _textAnim.timeScale = 10;
+            visibleContainer.SetActive(isVisible);
         }
 
         public void SetCharacterAndText(string character, string text)
@@ -169,6 +169,12 @@ namespace Again.Scripts.Runtime.Components
                         .OnComplete(() => onComplete?.Invoke());
                     break;
             }
+        }
+
+        public void SpeedUpText()
+        {
+            if (_textAnim != null)
+                _textAnim.timeScale = 10;
         }
 
         private void _OnClickNextButton()

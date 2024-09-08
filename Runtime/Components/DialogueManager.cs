@@ -9,25 +9,34 @@ namespace Again.Scripts.Runtime.Components
 {
     public class DialogueManager : MonoBehaviour
     {
-        public DialogueView dialogueView;
-        public OptionMenuView optionMenuView;
-        private readonly List<GameObject> _currentViewObjects = new();
+        public GameObject dialogueView;
+        public GameObject optionMenuView;
         private Language _currentLanguage = Language.Chinese;
         private OptionMenuCommand _currentOptionMenuCommand;
         private SayCommand _currentSayCommand;
-
+        private IDialogueView _dialogueView;
+        private bool _isDialogueShowing;
+        private bool _isOptionMenuShowing;
         private Dictionary<string, List<string>> _localeDict = new();
+        private IOptionMenuView _optionMenuView;
+
+        private void Awake()
+        {
+            _dialogueView = dialogueView.GetComponent<IDialogueView>();
+            _optionMenuView = optionMenuView.GetComponent<IOptionMenuView>();
+        }
+
 
         public void Reset()
         {
-            dialogueView.Reset();
-            optionMenuView.Reset();
-            _currentViewObjects.Clear();
+            _dialogueView.Reset();
+            _optionMenuView.Reset();
         }
 
-        private void SetViewVisible(bool isVisible)
+        public void SetVisible(bool isVisible)
         {
-            foreach (var viewObject in _currentViewObjects) viewObject.SetActive(isVisible);
+            if (_isDialogueShowing) _dialogueView.SetVisible(isVisible);
+            if (_isOptionMenuShowing) _optionMenuView.SetVisible(isVisible);
         }
 
         public void ShowDialogue(SayCommand command, Action onComplete = null)
@@ -37,10 +46,10 @@ namespace Again.Scripts.Runtime.Components
             var text = _GetTextString(command);
             var character = _GetCharacterString(command);
 
+            _isDialogueShowing = true;
             _currentSayCommand = command;
-            dialogueView.ScaleText(command.Scale);
-            dialogueView.Show(character, text, callback);
-            _OnViewOpen(dialogueView.gameObject);
+            _dialogueView.ScaleText(command.Scale);
+            _dialogueView.ShowText(character, text, callback);
             if (command.Voice != null) Debug.Log("Voice: " + command.Voice);
         }
 
@@ -48,7 +57,7 @@ namespace Again.Scripts.Runtime.Components
         {
             var callback = new Action<int>(index =>
             {
-                _OnViewClose(optionMenuView.gameObject);
+                _isOptionMenuShowing = false;
                 onComplete(index);
             });
 
@@ -56,55 +65,41 @@ namespace Again.Scripts.Runtime.Components
             foreach (var option in command.Options)
                 options.Add(_GetOptionString(option));
 
+            _isOptionMenuShowing = true;
             _currentOptionMenuCommand = command;
-            optionMenuView.Show(options, callback);
-            _OnViewOpen(optionMenuView.gameObject);
+            _optionMenuView.ShowOptions(options, callback);
         }
 
         public void Shake(ShakeDialogueCommand command, Action onComplete = null)
         {
-            dialogueView.Shake(command.Duration, command.Strength, command.Vibrato, command.Randomness,
+            _dialogueView.Shake(command.Duration, command.Strength, command.Vibrato, command.Randomness,
                 command.Snapping, command.FadeOut, command.ShakeType, onComplete);
-        }
-
-        public void SkipDialogue()
-        {
-            AgainSystem.Instance.NextCommand();
         }
 
         public void Hide()
         {
-            dialogueView.Hide();
+            _isDialogueShowing = false;
+            _dialogueView.Hide();
         }
 
         public void SetLanguage(Language language)
         {
             _currentLanguage = language;
             if (_currentSayCommand != null)
-                dialogueView.SetCharacterAndText(_GetCharacterString(_currentSayCommand),
+                _dialogueView.SetCharacterAndText(_GetCharacterString(_currentSayCommand),
                     _GetTextString(_currentSayCommand));
             if (_currentOptionMenuCommand != null)
             {
                 var options = new List<string>();
                 foreach (var option in _currentOptionMenuCommand.Options)
                     options.Add(_GetOptionString(option));
-                optionMenuView.UpdateOptionTexts(options);
+                _optionMenuView.UpdateOptionTexts(options);
             }
         }
 
         public void SetLocaleDict(Dictionary<string, List<string>> localeDict)
         {
             _localeDict = localeDict;
-        }
-
-        public void _OnViewOpen(GameObject viewObject)
-        {
-            _currentViewObjects.Add(viewObject);
-        }
-
-        public void _OnViewClose(GameObject viewObject)
-        {
-            _currentViewObjects.Remove(viewObject);
         }
 
         private string _GetTextString(SayCommand command)

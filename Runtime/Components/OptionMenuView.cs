@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Again.Scripts.Runtime.Components
 {
-    public class OptionMenuView : MonoBehaviour
+    public class OptionMenuView : MonoBehaviour, IOptionMenuView
     {
         private UIContainer _container;
         private List<UIButton> _optionButtons;
@@ -41,7 +41,12 @@ namespace Again.Scripts.Runtime.Components
             }
         }
 
-        public void Show(List<string> options, Action<int> onComplete)
+        public void SetVisible(bool isVisible)
+        {
+            gameObject.SetActive(isVisible);
+        }
+
+        public void ShowOptions(List<string> options, Action<int> onComplete)
         {
             for (var i = 0; i < options.Count; i++)
             {
