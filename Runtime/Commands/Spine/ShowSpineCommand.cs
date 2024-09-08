@@ -4,7 +4,7 @@ namespace Again.Scripts.Runtime.Commands.Spine
 {
     public class ShowSpineCommand : Command
     {
-        public string SpineName { get; set; }
+        public string Name { get; set; }
         public string Animation { get; set; }
         public string Skin { get; set; }
 

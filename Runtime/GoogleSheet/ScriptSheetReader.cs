@@ -324,6 +324,7 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Animation", Type = "string", CanBeEmpty = false },
                 new() { Name = "Skin", Type = "string", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
@@ -333,14 +334,8 @@ namespace Again.Runtime.GoogleSheet
                 new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true },
                 new() { Name = "Scale", Type = "float", CanBeEmpty = true }
             };
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} ShowSpineCommand Character 或 Name 必填");
-                return null;
-            }
 
-            var showSpineCommand = new ShowSpineCommand { SpineName = spineName };
+            var showSpineCommand = new ShowSpineCommand();
             SetProperties(showSpineCommand, propertyInfos, dict);
             return showSpineCommand;
         }
@@ -366,6 +361,7 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "Strength", Type = "float", CanBeEmpty = true },
                 new() { Name = "Vibrato", Type = "int", CanBeEmpty = true },
@@ -374,14 +370,7 @@ namespace Again.Runtime.GoogleSheet
                 new() { Name = "ShakeType", Type = "ShakeType", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} ShakeSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new ShakeSpineCommand { SpineName = spineName };
+            var command = new ShakeSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -392,20 +381,14 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "Scale", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} ScaleSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new ScaleSpineCommand { SpineName = spineName };
+            var command = new ScaleSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -416,19 +399,13 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosY", Type = "float", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} MoveSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new MoveSpineCommand { SpineName = spineName };
+            var command = new MoveSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -439,19 +416,13 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "JumpPower", Type = "float", CanBeEmpty = true },
                 new() { Name = "JumpCount", Type = "int", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} JumpSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new JumpSpineCommand { SpineName = spineName };
+            var command = new JumpSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -462,18 +433,12 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "HideType", Type = "HideAnimationType", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} HideSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new HideSpineCommand { SpineName = spineName };
+            var command = new HideSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -484,19 +449,13 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Skin", Type = "string", CanBeEmpty = true },
                 new() { Name = "Animation", Type = "string", CanBeEmpty = true },
                 new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} ChangeSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new ChangeSpineCommand { SpineName = spineName };
+            var command = new ChangeSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }
@@ -507,17 +466,11 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "ChangeColorType", Type = "ChangeColorType", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} ChangeSpineColorCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new ChangeSpineColorCommand { SpineName = spineName };
+            var command = new ChangeSpineColorCommand();
             if (dict.TryGetValue("Color", out var colorString))
                 command.ColorDelta = ParseColorString(colorString);
             SetProperties(command, propertyInfos, dict);
@@ -561,20 +514,14 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "Scale", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
             };
 
-            var spineName = string.IsNullOrEmpty(dict["Character"]) ? dict["Name"] : dict["Character"];
-            if (string.IsNullOrEmpty(spineName))
-            {
-                Debug.LogError($"Line {_currentCommandIndex} LookAtSpineCommand Character 或 Name 必填");
-                return null;
-            }
-
-            var command = new LookAtSpineCommand { SpineName = spineName };
+            var command = new LookAtSpineCommand();
             SetProperties(command, propertyInfos, dict);
             return command;
         }

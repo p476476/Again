@@ -2,7 +2,7 @@ namespace Again.Scripts.Runtime.Commands.Spine
 {
     public class ScaleSpineCommand : Command
     {
-        public string SpineName { get; set; }
+        public string Name { get; set; }
         public float Duration { get; set; } = 1f;
         public float Scale { get; set; } = 1f;
 

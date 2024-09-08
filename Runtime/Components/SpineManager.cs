@@ -16,7 +16,7 @@ namespace Again.Scripts.Runtime.Components
 
         [SerializeField] public SkeletonDataAsset skeletonDataAsset;
 
-        [SerializeField] public Vector2 pivot = new(0.5f, 0.5f);
+        [SerializeField] public Vector2 pivot = new(0.5f, 0);
     }
 
     public class SpineManager : MonoBehaviour
@@ -25,14 +25,20 @@ namespace Again.Scripts.Runtime.Components
         private const float PhysicsFactor = 1f;
         public GameObject spineGameObjectPrefab;
         public GameObject spineView;
-
-        [SerializeField] public List<SpineInfo> spineInfos;
-
         private Dictionary<string, GameObject> _spineGameObjectDict;
+        private List<SpineInfo> _spineInfos;
 
         private void Awake()
         {
             _spineGameObjectDict = new Dictionary<string, GameObject>();
+            _spineInfos = new List<SpineInfo>();
+            var assets = Resources.LoadAll<SkeletonDataAsset>("Spines");
+            foreach (var asset in assets)
+                _spineInfos.Add(new SpineInfo
+                {
+                    spineName = asset.name,
+                    skeletonDataAsset = asset
+                });
         }
 
         public void Reset()
@@ -53,10 +59,10 @@ namespace Again.Scripts.Runtime.Components
 
         public void Show(ShowSpineCommand command, Action onComplete = null)
         {
-            var spineInfo = spineInfos.Find(info => info.spineName == command.SpineName);
+            var spineInfo = _spineInfos.Find(info => info.spineName == command.Name);
             if (spineInfo == null)
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 onComplete?.Invoke();
                 return;
             }
@@ -64,7 +70,7 @@ namespace Again.Scripts.Runtime.Components
             var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
             var parentWidth = spineView.GetComponent<RectTransform>().rect.width;
 
-            spineGameObject.name = command.SpineName;
+            spineGameObject.name = command.Name;
 
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
@@ -73,7 +79,7 @@ namespace Again.Scripts.Runtime.Components
             spineAnimation.skeletonDataAsset = spineInfo.skeletonDataAsset;
             _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
             _SetSkin(spineAnimation, command.Skin, command.Id);
-            _spineGameObjectDict.Add(command.SpineName, spineGameObject);
+            _spineGameObjectDict.Add(command.Name, spineGameObject);
 
             var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;
             material.SetColor("_Color", Color.white);
@@ -141,13 +147,13 @@ namespace Again.Scripts.Runtime.Components
 
         public void Change(ChangeSpineCommand command)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
 
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
             _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
@@ -158,14 +164,14 @@ namespace Again.Scripts.Runtime.Components
 
         public void Hide(HideSpineCommand command, Action onComplete = null)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 onComplete?.Invoke();
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
 
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
             var goRT = go.GetComponent<RectTransform>();
@@ -173,7 +179,7 @@ namespace Again.Scripts.Runtime.Components
             {
                 case HideAnimationType.None:
                     Destroy(spineAnimation.gameObject);
-                    _spineGameObjectDict.Remove(command.SpineName);
+                    _spineGameObjectDict.Remove(command.Name);
                     onComplete?.Invoke();
                     break;
                 case HideAnimationType.Fade:
@@ -185,7 +191,7 @@ namespace Again.Scripts.Runtime.Components
                             0,
                             command.Duration
                         )
-                        .OnComplete(() => _RemoveSpineAnimation(command.SpineName, onComplete));
+                        .OnComplete(() => _RemoveSpineAnimation(command.Name, onComplete));
                     break;
                 case HideAnimationType.SlideToLeft:
                     spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
@@ -196,7 +202,7 @@ namespace Again.Scripts.Runtime.Components
                         .OnComplete(() =>
                         {
                             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
-                            _RemoveSpineAnimation(command.SpineName, onComplete);
+                            _RemoveSpineAnimation(command.Name, onComplete);
                         });
                     break;
                 case HideAnimationType.SlideToRight:
@@ -208,7 +214,7 @@ namespace Again.Scripts.Runtime.Components
                         .OnComplete(() =>
                         {
                             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
-                            _RemoveSpineAnimation(command.SpineName, onComplete);
+                            _RemoveSpineAnimation(command.Name, onComplete);
                         });
                     break;
             }
@@ -216,14 +222,14 @@ namespace Again.Scripts.Runtime.Components
 
         public void Move(MoveSpineCommand command, Action onComplete = null)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 onComplete?.Invoke();
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
 
@@ -242,14 +248,14 @@ namespace Again.Scripts.Runtime.Components
 
         public void Scale(ScaleSpineCommand command, Action onComplete = null)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 onComplete?.Invoke();
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
 
             var goRT = go.GetComponent<RectTransform>();
             PivotTool.SetPivotInWorldSpace(goRT, new Vector2(command.AnchorX, command.AnchorY));
@@ -270,14 +276,14 @@ namespace Again.Scripts.Runtime.Components
 
         public void Jump(JumpSpineCommand command, Action onComplete = null)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 onComplete?.Invoke();
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
 
             var position = go.GetComponent<RectTransform>().localPosition;
             go.GetComponent<RectTransform>()
@@ -287,14 +293,14 @@ namespace Again.Scripts.Runtime.Components
 
         public void Shake(ShakeSpineCommand command, Action onComplete = null)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 onComplete?.Invoke();
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
 
             var goRT = go.GetComponent<RectTransform>();
             var strength = command.Strength * ShakeFactor;
@@ -338,13 +344,13 @@ namespace Again.Scripts.Runtime.Components
 
         public void ChangeColor(ChangeSpineColorCommand command)
         {
-            if (!_spineGameObjectDict.ContainsKey(command.SpineName))
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
             {
-                Debug.LogError("Spine not found: " + command.SpineName);
+                Debug.LogError("Spine not found: " + command.Name);
                 return;
             }
 
-            var go = _spineGameObjectDict[command.SpineName];
+            var go = _spineGameObjectDict[command.Name];
 
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
             var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;

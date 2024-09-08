@@ -4,7 +4,7 @@ namespace Again.Scripts.Runtime.Commands.Spine
 {
     public class ShakeSpineCommand : Command
     {
-        public string SpineName { get; set; }
+        public string Name { get; set; }
         public float Duration { get; set; } = 1f;
         public float Strength { get; set; } = 30f;
         public int Vibrato { get; set; } = 6;

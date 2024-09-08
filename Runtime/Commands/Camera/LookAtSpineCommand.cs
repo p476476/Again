@@ -4,7 +4,7 @@ namespace Again.Scripts.Runtime.Commands.Camera
 {
     public class LookAtSpineCommand : Command
     {
-        public string SpineName { get; set; }
+        public string Name { get; set; }
         public float Duration { get; set; } = 1f;
         public float Scale { get; set; } = 1.5f;
         public float AnchorX { get; set; } = 0.5f;
@@ -14,10 +14,10 @@ namespace Again.Scripts.Runtime.Commands.Camera
         {
             var cameraManager = AgainSystem.Instance.CameraManager;
             var spineManager = AgainSystem.Instance.SpineManager;
-            var go = spineManager.GetSpineObject(SpineName);
+            var go = spineManager.GetSpineObject(Name);
             if (go == null)
             {
-                Debug.LogError("Spine not found: " + SpineName);
+                Debug.LogError("Spine not found: " + Name);
                 AgainSystem.Instance.NextCommand();
                 return;
             }

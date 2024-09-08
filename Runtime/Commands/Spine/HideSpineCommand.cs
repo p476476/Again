@@ -4,7 +4,7 @@ namespace Again.Scripts.Runtime.Commands.Spine
 {
     public class HideSpineCommand : Command
     {
-        public string SpineName { get; set; }
+        public string Name { get; set; }
 
         public HideAnimationType HideType { get; set; } = HideAnimationType.Fade;
 
