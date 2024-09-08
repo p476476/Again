@@ -393,14 +393,14 @@ namespace Again.Scripts.Runtime.Components
             onComplete?.Invoke();
         }
 
-        private void _SetAnimation(SkeletonAnimation animation, string animationName, bool isLoop, int commandIndex)
+        private void _SetAnimation(SkeletonAnimation anim, string animationName, bool isLoop, int commandIndex)
         {
             if (string.IsNullOrEmpty(animationName))
                 return;
 
             try
             {
-                animation.AnimationState.SetAnimation(0, animationName, isLoop);
+                anim.AnimationState.SetAnimation(0, animationName, isLoop);
             }
             catch (Exception)
             {
@@ -408,15 +408,15 @@ namespace Again.Scripts.Runtime.Components
             }
         }
 
-        private void _SetSkin(SkeletonAnimation animation, string skinName, int commandIndex)
+        private void _SetSkin(SkeletonAnimation anim, string skinName, int commandIndex)
         {
             if (string.IsNullOrEmpty(skinName))
                 return;
 
             try
             {
-                animation.skeleton.SetSkin(skinName);
-                animation.skeleton.SetToSetupPose();
+                anim.skeleton.SetSkin(skinName);
+                anim.skeleton.SetToSetupPose();
             }
             catch (Exception)
             {
