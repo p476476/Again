@@ -7,16 +7,14 @@ using Again.Scripts.Runtime.LocalSheet;
 using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace Again.Scripts.Runtime
 {
     public class AgainSystem : MonoBehaviour
     {
-        public Image backgroundImage;
         public UIContainer transferView;
 
-        [SerializeField] public UnityEvent OnCommandsFinished = new();
+        [SerializeField] public UnityEvent OnScriptFinished = new();
         public string googleSheetId;
 
         private List<Command> _commands;
@@ -66,7 +64,7 @@ namespace Again.Scripts.Runtime
             if (commands.Count == 0)
             {
                 Debug.Log("腳本沒有任何指令");
-                OnCommandsFinished?.Invoke();
+                OnScriptFinished?.Invoke();
                 return;
             }
 
@@ -89,7 +87,7 @@ namespace Again.Scripts.Runtime
             ImageManager.Reset();
             DialogueManager.Reset();
             DialogueManager.Hide();
-            OnCommandsFinished?.Invoke();
+            OnScriptFinished?.Invoke();
         }
 
         public void GoToCommand(Command command)

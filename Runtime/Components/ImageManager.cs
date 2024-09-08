@@ -5,6 +5,7 @@ using Again.Scripts.Runtime.Common;
 using Again.Scripts.Runtime.Enums;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Again.Scripts.Runtime.Components
 {
@@ -13,6 +14,7 @@ namespace Again.Scripts.Runtime.Components
         private const float ShakeFactor = 0.5f;
         public GameObject imageView;
         public GameObject imagePrefab;
+        public Image background;
         private readonly Dictionary<string, GameObject> _imageObjectDict = new();
 
         public void Reset()

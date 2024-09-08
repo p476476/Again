@@ -19,7 +19,7 @@ namespace Again.Runtime.GoogleSheet
         {
             Show();
             titleText.text = AgainSystem.Instance.SheetImporter is GoogleSheetImporter ? "遠端腳本" : "本地腳本";
-            AgainSystem.Instance.OnCommandsFinished.AddListener(Show);
+            AgainSystem.Instance.OnScriptFinished.AddListener(Show);
         }
 
         public void Show()
