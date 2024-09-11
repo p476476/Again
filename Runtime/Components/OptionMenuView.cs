@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Doozy.Runtime.UIManager.Components;
 using Doozy.Runtime.UIManager.Containers;
 using TMPro;
@@ -10,14 +9,20 @@ namespace Again.Scripts.Runtime.Components
 {
     public class OptionMenuView : MonoBehaviour, IOptionMenuView
     {
+        private const int MaxOptionCount = 8;
+        public GameObject buttonPrefab;
+        public Transform buttonContainer;
+        private readonly List<UIButton> _optionButtons = new();
         private UIContainer _container;
-        private List<UIButton> _optionButtons;
 
         private void Awake()
         {
             _container = GetComponent<UIContainer>();
-            _optionButtons = _container.GetComponentsInChildren<UIButton>().ToList();
-            foreach (var button in _optionButtons) button.gameObject.SetActive(false);
+            for (var i = 0; i < MaxOptionCount; i++)
+            {
+                var button = Instantiate(buttonPrefab, buttonContainer).GetComponent<UIButton>();
+                _optionButtons.Add(button);
+            }
         }
 
         public void Reset()
