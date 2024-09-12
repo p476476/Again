@@ -344,7 +344,7 @@ namespace Again.Runtime.GoogleSheet
         {
             var propertyInfos = new List<PropertyInfo>
             {
-                new() { Name = "Character", Type = "string", CanBeEmpty = false },
+                new() { Name = "Character", Type = "string", CanBeEmpty = true },
                 new() { Name = "Text", Type = "string", CanBeEmpty = false },
                 new() { Name = "Voice", Type = "string", CanBeEmpty = true },
                 new() { Name = "Scale", Type = "float", CanBeEmpty = true },

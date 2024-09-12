@@ -30,6 +30,7 @@ namespace Again.Scripts.Runtime.Components
         public Sprite nextSprite;
         public Image stateIcon;
         public GameObject visibleContainer;
+        public GameObject characterContainer;
 
         [SerializeField] private InputActionAsset actionAsset;
         private AudioSource _audioSource;
@@ -86,6 +87,7 @@ namespace Again.Scripts.Runtime.Components
 
             _onComplete = onComplete;
             characterText.text = character;
+            characterContainer.SetActive(!string.IsNullOrEmpty(character));
             dialogueText.text = "";
             if (_audioSource.gameObject.activeSelf)
                 _audioSource.Play();
@@ -122,6 +124,8 @@ namespace Again.Scripts.Runtime.Components
 
             if (_textAnim != null)
                 _textAnim.Kill(true);
+
+            characterContainer.SetActive(!string.IsNullOrEmpty(character));
             characterText.text = character;
             dialogueText.text = text;
         }

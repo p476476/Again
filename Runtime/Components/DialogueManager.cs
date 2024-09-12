@@ -120,6 +120,8 @@ namespace Again.Scripts.Runtime.Components
         {
             var text = command.Character;
 
+            if (string.IsNullOrEmpty(text)) return "";
+
             if (_localeDict.TryGetValue(command.Character, out var translations))
                 text = translations[(int)_currentLanguage];
             return text;
