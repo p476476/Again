@@ -50,7 +50,7 @@ namespace Again.Scripts.Runtime.Components
             spriteRenderer.sprite = sprite;
             rt.anchorMin = new Vector2(0.5f, 0.5f);
             rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(sprite.rect.width, sprite.rect.height);
+            rt.sizeDelta = new Vector2(spriteRenderer.size.x, spriteRenderer.size.y);
             rt.localScale = new Vector3(command.Scale, command.Scale, 1);
             rt.localPosition = new Vector3(
                 command.PosX * parentWidth / 2,
@@ -101,7 +101,9 @@ namespace Again.Scripts.Runtime.Components
                 return;
             }
 
-            go.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+            var spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
+            go.GetComponent<RectTransform>().sizeDelta = new Vector2(spriteRenderer.size.x, spriteRenderer.size.y);
+            spriteRenderer.sprite = sprite;
         }
 
         public void Hide(HideImageCommand command, Action onComplete = null)
@@ -117,6 +119,7 @@ namespace Again.Scripts.Runtime.Components
             _imageObjectDict.Remove(command.Name);
             var rt = go.GetComponent<RectTransform>();
             var spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
+            var parentWidth = imageView.GetComponent<RectTransform>().rect.width;
             switch (command.HideType)
             {
                 case HideAnimationType.None:
@@ -133,7 +136,7 @@ namespace Again.Scripts.Runtime.Components
                         });
                     break;
                 case HideAnimationType.SlideToLeft:
-                    rt.DOLocalMoveX(-rt.rect.width, command.Duration)
+                    rt.DOLocalMoveX((parentWidth + rt.rect.width * rt.localScale.x) * -0.5f, command.Duration)
                         .OnComplete(() =>
                         {
                             Destroy(spriteRenderer.transform.parent.gameObject);
@@ -141,7 +144,7 @@ namespace Again.Scripts.Runtime.Components
                         });
                     break;
                 case HideAnimationType.SlideToRight:
-                    rt.DOLocalMoveX(rt.rect.width, command.Duration)
+                    rt.DOLocalMoveX((parentWidth + rt.rect.width * rt.localScale.x) * 0.5f, command.Duration)
                         .OnComplete(() =>
                         {
                             Destroy(spriteRenderer.transform.parent.gameObject);

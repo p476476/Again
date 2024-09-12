@@ -195,8 +195,10 @@ namespace Again.Scripts.Runtime.Components
                     break;
                 case HideAnimationType.SlideToLeft:
                     spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
+                    var spineWidth = spineAnimation.skeletonDataAsset.GetSkeletonData(true).Width *
+                                     spineAnimation.skeletonDataAsset.scale;
                     goRT.DOLocalMoveX(
-                            -spineView.GetComponent<RectTransform>().rect.width / 2,
+                            (spineView.GetComponent<RectTransform>().rect.width + spineWidth) * -0.5f,
                             command.Duration
                         )
                         .OnComplete(() =>
@@ -207,8 +209,10 @@ namespace Again.Scripts.Runtime.Components
                     break;
                 case HideAnimationType.SlideToRight:
                     spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
+                    spineWidth = spineAnimation.skeletonDataAsset.GetSkeletonData(true).Width *
+                                 spineAnimation.skeletonDataAsset.scale;
                     goRT.DOLocalMoveX(
-                            spineView.GetComponent<RectTransform>().rect.width / 2,
+                            (spineView.GetComponent<RectTransform>().rect.width + spineWidth) * 0.5f,
                             command.Duration
                         )
                         .OnComplete(() =>

@@ -49,6 +49,14 @@ namespace Again.Scripts.Runtime.Components
         public void LookAtObject(GameObject target, float duration, float scale, Vector2 pivot,
             Action onComplete = null)
         {
+            //if is orthographic camera
+            if (_mainCamera.orthographic)
+            {
+                Debug.LogError("LookAtObject only works with perspective camera");
+                onComplete?.Invoke();
+                return;
+            }
+
             PivotTool.SetPivotInWorldSpace(target.GetComponent<RectTransform>(), pivot);
             var position = target.transform.position;
             var originalDistanceZ = Mathf.Abs(_originalPosition.z - position.z);
@@ -59,6 +67,14 @@ namespace Again.Scripts.Runtime.Components
 
         public void MoveBackCamera(MoveBackCameraCommand cameraCommand, Action onComplete = null)
         {
+            //if is orthographic camera
+            if (_mainCamera.orthographic)
+            {
+                Debug.LogError("MoveBackCamera only works with perspective camera");
+                onComplete?.Invoke();
+                return;
+            }
+
             _mainCamera.transform.DOMove(_originalPosition, cameraCommand.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
