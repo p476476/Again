@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Commands.OptionMenu;
+using Again.Scripts.Runtime.Common;
 using Again.Scripts.Runtime.Enums;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace Again.Scripts.Runtime.Components
     {
         public GameObject dialogueView;
         public GameObject optionMenuView;
+        public GameObject logView;
+        private readonly List<DialogueLog> _logs = new();
         private Language _currentLanguage = Language.Chinese;
         private OptionMenuCommand _currentOptionMenuCommand;
         private SayCommand _currentSayCommand;
@@ -18,12 +21,14 @@ namespace Again.Scripts.Runtime.Components
         private bool _isDialogueShowing;
         private bool _isOptionMenuShowing;
         private Dictionary<string, List<string>> _localeDict = new();
+        private ILogView _logView;
         private IOptionMenuView _optionMenuView;
 
         private void Awake()
         {
             _dialogueView = dialogueView.GetComponent<IDialogueView>();
             _optionMenuView = optionMenuView.GetComponent<IOptionMenuView>();
+            if (logView != null) _logView = logView.GetComponent<ILogView>();
         }
 
 
@@ -31,6 +36,7 @@ namespace Again.Scripts.Runtime.Components
         {
             _dialogueView.Reset();
             _optionMenuView.Reset();
+            _logView?.Reset();
         }
 
         public void SetVisible(bool isVisible)
@@ -50,6 +56,7 @@ namespace Again.Scripts.Runtime.Components
             _currentSayCommand = command;
             _dialogueView.ScaleText(command.Scale);
             _dialogueView.ShowText(character, text, callback);
+            _addLog(command);
             if (command.Voice != null) Debug.Log("Voice: " + command.Voice);
         }
 
@@ -95,11 +102,37 @@ namespace Again.Scripts.Runtime.Components
                     options.Add(_GetOptionString(option));
                 _optionMenuView.UpdateOptionTexts(options);
             }
+
+            for (var i = 0; i < _logs.Count; i++)
+            {
+                var log = _logs[i];
+                log.CharacterKey = _GetTranslation(log.CharacterKey);
+                log.TextKey = _GetTranslation(log.TextKey);
+                _logs[i] = log;
+            }
+
+            _logView?.SetLogs(_logs);
         }
 
         public void SetLocaleDict(Dictionary<string, List<string>> localeDict)
         {
             _localeDict = localeDict;
+        }
+
+        public void SetLogs(List<DialogueLog> logs)
+        {
+            _logs.Clear();
+            _logs.AddRange(logs);
+            _logView?.SetLogs(logs);
+        }
+
+        private void _addLog(SayCommand command)
+        {
+            var log = new DialogueLog();
+            log.CharacterKey = command.Character;
+            log.TextKey = command.Text;
+            _logs.Add(log);
+            _logView?.Add(log);
         }
 
         private string _GetTextString(SayCommand command)
@@ -114,6 +147,14 @@ namespace Again.Scripts.Runtime.Components
             }
 
             return text;
+        }
+
+        private string _GetTranslation(string key)
+        {
+            if (string.IsNullOrEmpty(key)) return "";
+            if (_localeDict.TryGetValue(key, out var translations))
+                return translations[(int)_currentLanguage];
+            return "";
         }
 
         private string _GetCharacterString(SayCommand command)

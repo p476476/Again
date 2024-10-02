@@ -17,10 +17,16 @@ namespace Again.Scripts.Runtime.Components
         public Image background;
         private readonly Dictionary<string, GameObject> _imageObjectDict = new();
 
+        private void Awake()
+        {
+            background.enabled = false;
+        }
+
         public void Reset()
         {
             foreach (var go in _imageObjectDict.Values) Destroy(go);
             _imageObjectDict.Clear();
+            background.enabled = false;
         }
 
         public GameObject GetImageObject(string objectName)
