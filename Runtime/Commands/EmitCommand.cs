@@ -9,7 +9,7 @@ namespace Again.Scripts.Runtime.Commands
 
         public override void Execute()
         {
-            if (Parameters != null)
+            if (Parameters.Count > 0)
                 AgainSystem.Instance.EventManager.Emit(Name, Parameters);
             else
                 AgainSystem.Instance.EventManager.Emit(Name);
