@@ -26,7 +26,8 @@ namespace Again.Scripts.Runtime.Components
         {
             foreach (var go in _imageObjectDict.Values) Destroy(go);
             _imageObjectDict.Clear();
-            background.enabled = false;
+            if (background)
+                background.enabled = false;
         }
 
         public GameObject GetImageObject(string objectName)
