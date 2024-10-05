@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Again.Scripts.Runtime;
 using Again.Scripts.Runtime.Commands;
@@ -13,9 +14,12 @@ namespace Again.Runtime.GoogleSheet
 {
     public class GoogleSheetImporter : ISheetImporter
     {
-        private const string URLFormat = @"https://docs.google.com/spreadsheets/d/{0}/gviz/tq?tqx=out:csv&sheet={1}";
+        private const string URLFormat =
+            @"https://docs.google.com/spreadsheets/d/{0}/gviz/tq?tqx=out:csv&sheet={1}";
+
         private const string PageListSheetName = "Config";
         private const string TranslationSheetName = "Translation";
+        private static readonly HttpClient client = new();
         private readonly string _sheetID;
 
         public GoogleSheetImporter([CanBeNull] string sheetID)
@@ -61,7 +65,6 @@ namespace Again.Runtime.GoogleSheet
             return commands;
         }
 
-
         public async Task<Dictionary<string, List<string>>> LoadTranslation()
         {
             if (string.IsNullOrEmpty(_sheetID))
@@ -101,28 +104,23 @@ namespace Again.Runtime.GoogleSheet
 
         private async Task<string> FetchData(string url)
         {
-            var webClient = new WebClient();
-            var request = default(Task<string>);
             try
             {
-                request = webClient.DownloadStringTaskAsync(url);
+                // 發送 HTTP 請求並獲取響應
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                // 讀取響應內容並指定使用 UTF-8 編碼
+                var responseBytes = await response.Content.ReadAsByteArrayAsync();
+                var responseString = Encoding.UTF8.GetString(responseBytes);
+
+                return responseString;
             }
-            catch (WebException)
+            catch (Exception ex)
             {
-                var message = $"Bad URL '{url}'";
-                throw new Exception(message);
+                Console.WriteLine($"Error fetching data: {ex.Message}");
+                return null;
             }
-
-            while (!request.IsCompleted)
-                await Task.Delay(100);
-
-            if (request.IsFaulted)
-            {
-                var message = $"Bad URL '{url}'";
-                throw new Exception(message);
-            }
-
-            return request.Result;
         }
     }
 }
