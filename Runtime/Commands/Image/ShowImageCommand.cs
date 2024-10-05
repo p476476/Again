@@ -1,4 +1,5 @@
 using Again.Scripts.Runtime.Enums;
+using DG.Tweening;
 
 namespace Again.Scripts.Runtime.Commands.Image
 {
@@ -18,11 +19,21 @@ namespace Again.Scripts.Runtime.Commands.Image
 
         public float Scale { get; set; } = 1f;
 
+        public float NextDuration { get; set; } = -1f;
+
 
         public override void Execute()
         {
             var imageManager = AgainSystem.Instance.ImageManager;
-            imageManager.Show(this, () => AgainSystem.Instance.NextCommand());
+            if (NextDuration < 0)
+            {
+                imageManager.Show(this, () => AgainSystem.Instance.NextCommand());
+            }
+            else
+            {
+                imageManager.Show(this, () => { });
+                DOTween.Sequence().AppendInterval(NextDuration).OnComplete(() => AgainSystem.Instance.NextCommand());
+            }
         }
     }
 }

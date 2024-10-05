@@ -175,7 +175,8 @@ namespace Again.Runtime.GoogleSheet
                 new() { Name = "Scale", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosY", Type = "float", CanBeEmpty = true },
-                new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true }
+                new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
+                new() { Name = "NextDuration", Type = "float", CanBeEmpty = true }
             };
 
             var command = new ShowImageCommand();
