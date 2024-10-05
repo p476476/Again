@@ -33,13 +33,14 @@ namespace Again.Scripts.Runtime
             if (Instance == null)
                 Instance = this;
             else
-                Destroy(gameObject);
+                Destroy(transform.parent.gameObject);
             _commands = new List<Command>();
             EventManager = new EventManager();
             DialogueManager = GetComponent<DialogueManager>();
             SpineManager = GetComponent<SpineManager>();
             CameraManager = GetComponent<CameraManager>();
             ImageManager = GetComponent<ImageManager>();
+
             if (string.IsNullOrEmpty(googleSheetId))
                 SheetImporter = new LocalSheetImporter();
             else
@@ -57,6 +58,7 @@ namespace Again.Scripts.Runtime
 
         public async void Execute(string scriptName)
         {
+            CameraManager.avgCamera.enabled = true;
             RunCommands(await SheetImporter.LoadScript(scriptName));
         }
 

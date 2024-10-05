@@ -9,23 +9,24 @@ namespace Again.Scripts.Runtime.Components
 {
     public class CameraManager : MonoBehaviour
     {
-        private Camera _mainCamera;
+        public Camera avgCamera;
         private Vector3 _originalPosition;
 
         private void Awake()
         {
-            _mainCamera = Camera.main;
-            _originalPosition = _mainCamera.transform.position;
+            _originalPosition = avgCamera.transform.position;
         }
 
         public void Reset()
         {
-            _mainCamera.transform.position = _originalPosition;
+            if (avgCamera == null) return;
+            avgCamera.transform.position = _originalPosition;
+            avgCamera.enabled = false;
         }
 
         public void Shake(ShakeCameraCommand command, Action onComplete = null)
         {
-            var cameraTransform = _mainCamera.transform;
+            var cameraTransform = avgCamera.transform;
             switch (command.ShakeType)
             {
                 case ShakeType.Horizontal:
@@ -50,7 +51,7 @@ namespace Again.Scripts.Runtime.Components
             Action onComplete = null)
         {
             //if is orthographic camera
-            if (_mainCamera.orthographic)
+            if (avgCamera.orthographic)
             {
                 Debug.LogError("LookAtObject only works with perspective camera");
                 onComplete?.Invoke();
@@ -62,20 +63,20 @@ namespace Again.Scripts.Runtime.Components
             var originalDistanceZ = Mathf.Abs(_originalPosition.z - position.z);
             var offsetZ = originalDistanceZ - originalDistanceZ / scale;
             var endPosition = new Vector3(position.x, position.y, _originalPosition.z + offsetZ);
-            _mainCamera.transform.DOMove(endPosition, duration).OnComplete(() => onComplete?.Invoke());
+            avgCamera.transform.DOMove(endPosition, duration).OnComplete(() => onComplete?.Invoke());
         }
 
         public void MoveBackCamera(MoveBackCameraCommand cameraCommand, Action onComplete = null)
         {
             //if is orthographic camera
-            if (_mainCamera.orthographic)
+            if (avgCamera.orthographic)
             {
                 Debug.LogError("MoveBackCamera only works with perspective camera");
                 onComplete?.Invoke();
                 return;
             }
 
-            _mainCamera.transform.DOMove(_originalPosition, cameraCommand.Duration)
+            avgCamera.transform.DOMove(_originalPosition, cameraCommand.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
     }
