@@ -1057,7 +1057,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageView: {fileID: 949999841710702677}
-  imagePrefab: {fileID: 6880484261902478665, guid: c9c7c9c6cb39edd4daff75bda1ecbd1f, type: 3}
+  imagePrefab: {fileID: 3254600053050889257, guid: e718290525a41e54e900b3ca6a6fdf6f, type: 3}
   background: {fileID: 2547011344082689762}
 --- !u!114 &1064706403916127604
 MonoBehaviour:
@@ -4490,7 +4490,7 @@ GameObject:
   - component: {fileID: 311035034669141026}
   - component: {fileID: 191859345936525850}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5108,7 +5108,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1909586565605608703}
   m_HandleRect: {fileID: 5526148394900281960}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5254,7 +5254,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &6358991569855590955
 MonoBehaviour:
@@ -13184,8 +13184,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00012207031}
-  m_SizeDelta: {x: 0, y: -880}
+  m_AnchoredPosition: {x: 0, y: 0.00024414062}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1954872853723149803
 MonoBehaviour:
