@@ -2,6 +2,7 @@ using System;
 using Again.Scripts.Runtime.Commands.Camera;
 using Again.Scripts.Runtime.Common;
 using Again.Scripts.Runtime.Enums;
+using Again.Scripts.Runtime.SaveData;
 using DG.Tweening;
 using UnityEngine;
 
@@ -22,6 +23,19 @@ namespace Again.Scripts.Runtime.Components
             if (avgCamera == null) return;
             avgCamera.transform.position = _originalPosition;
             avgCamera.enabled = false;
+        }
+
+        public void Load(string saveData)
+        {
+            var data = CameraManagerSaveData.FromJson(saveData);
+            avgCamera.transform.position = data.Transform.position;
+            avgCamera.transform.rotation = data.Transform.rotation;
+            _originalPosition = data.OriginalPosition;
+        }
+
+        public string Save()
+        {
+            return CameraManagerSaveData.ToJson(_originalPosition, avgCamera.transform);
         }
 
         public void Shake(ShakeCameraCommand command, Action onComplete = null)

@@ -31,7 +31,6 @@ namespace Again.Scripts.Runtime.Components
             if (logView != null) _logView = logView.GetComponent<ILogView>();
         }
 
-
         public void Reset()
         {
             _dialogueView.Reset();

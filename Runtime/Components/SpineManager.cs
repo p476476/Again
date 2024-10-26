@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Again.Scripts.Runtime.Commands.Spine;
 using Again.Scripts.Runtime.Common;
 using Again.Scripts.Runtime.Enums;
+using Again.Scripts.Runtime.SaveData;
 using DG.Tweening;
 using Spine.Unity;
 using UnityEngine;
@@ -52,6 +53,40 @@ namespace Again.Scripts.Runtime.Components
             _spineGameObjectDict.Clear();
         }
 
+        public void Load(string saveData)
+        {
+            var data = JsonUtility.FromJson<SpineManagerSaveData>(saveData);
+            foreach (var spineObjectData in data.SpineObjectDataList)
+            {
+                var spineInfo = _spineInfos.Find(info => info.spineName == spineObjectData.name);
+                if (spineInfo == null) continue;
+
+                var spineGameObject = CreateSpineGameObject(
+                    spineObjectData.name,
+                    spineObjectData.animationName,
+                    spineObjectData.skinName,
+                    spineObjectData.isLoop,
+                    spineInfo
+                );
+
+                var spineRT = spineGameObject.GetComponent<RectTransform>();
+                spineRT.localPosition = spineObjectData.position;
+                spineRT.eulerAngles = spineObjectData.rotation;
+                spineRT.localScale = spineObjectData.scale;
+                spineRT.sizeDelta = spineObjectData.sizeDelta;
+
+                var material = spineGameObject.GetComponentInChildren<SkeletonAnimation>().skeletonDataAsset
+                    .atlasAssets[0].PrimaryMaterial;
+                material.SetColor("_Color", spineObjectData.materialColor);
+                material.SetColor("_Black", spineObjectData.materialBlackColor);
+            }
+        }
+
+        public string Save()
+        {
+            return SpineManagerSaveData.ToJson(_spineGameObjectDict);
+        }
+
         public GameObject GetSpineObject(string spineName)
         {
             return _spineGameObjectDict.TryGetValue(spineName, out var go) ? go : null;
@@ -67,23 +102,16 @@ namespace Again.Scripts.Runtime.Components
                 return;
             }
 
-            var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
-            var parentWidth = spineView.GetComponent<RectTransform>().rect.width;
-
-            spineGameObject.name = command.Name;
-
+            var spineGameObject = CreateSpineGameObject(
+                command.Name,
+                command.Animation,
+                command.Skin,
+                command.IsLoop,
+                spineInfo,
+                command.Id
+            );
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
-            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
-            spineAnimation.PhysicsRotationInheritanceFactor = PhysicsFactor;
-
-            spineAnimation.skeletonDataAsset = spineInfo.skeletonDataAsset;
-            _SetAnimation(spineAnimation, command.Animation, command.IsLoop, command.Id);
-            _SetSkin(spineAnimation, command.Skin, command.Id);
-            _spineGameObjectDict.Add(command.Name, spineGameObject);
-
-            var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;
-            material.SetColor("_Color", Color.white);
-            material.SetColor("_Black", Color.black);
+            var parentWidth = spineView.GetComponent<RectTransform>().rect.width;
 
             var spineRT = spineGameObject.GetComponent<RectTransform>();
             var spineWidth = spineAnimation.skeletonDataAsset.GetSkeletonData(true).Width;
@@ -143,6 +171,27 @@ namespace Again.Scripts.Runtime.Components
                         });
                     break;
             }
+        }
+
+        private GameObject CreateSpineGameObject(string spineName, string animationName,
+            string skinName, bool isLoop, SpineInfo spineInfo, int id = 0)
+        {
+            var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
+            spineGameObject.name = spineName;
+
+            var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
+            spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
+            spineAnimation.PhysicsRotationInheritanceFactor = PhysicsFactor;
+
+            spineAnimation.skeletonDataAsset = spineInfo.skeletonDataAsset;
+            _SetAnimation(spineAnimation, animationName, isLoop, id);
+            _SetSkin(spineAnimation, skinName, id);
+            _spineGameObjectDict.Add(spineName, spineGameObject);
+
+            var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;
+            material.SetColor("_Color", Color.white);
+            material.SetColor("_Black", Color.black);
+            return spineGameObject;
         }
 
         public void Change(ChangeSpineCommand command)

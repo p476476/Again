@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Again.Scripts.Runtime.Commands.Image;
 using Again.Scripts.Runtime.Common;
 using Again.Scripts.Runtime.Enums;
+using Again.Scripts.Runtime.SaveData;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,6 +29,29 @@ namespace Again.Scripts.Runtime.Components
             _imageObjectDict.Clear();
             if (background)
                 background.enabled = false;
+        }
+
+        public void Load(string saveData)
+        {
+            var list = ImageManagerSaveData.FromJson(saveData);
+            foreach (var data in list)
+            {
+                var go = Instantiate(imagePrefab, imageView.transform);
+                var rt = go.GetComponent<RectTransform>();
+                var spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
+                go.name = data.name;
+                rt.localPosition = data.position;
+                rt.eulerAngles = data.rotation;
+                rt.localScale = data.scale;
+                rt.sizeDelta = data.sizeDelta;
+                spriteRenderer.sprite = Resources.Load<Sprite>($"Images/{data.spriteName}");
+                spriteRenderer.color = data.spriteColor;
+            }
+        }
+
+        public string Save()
+        {
+            return ImageManagerSaveData.ToJson(_imageObjectDict);
         }
 
         public GameObject GetImageObject(string objectName)

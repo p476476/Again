@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.IO;
 using Again.Runtime.GoogleSheet;
 using Again.Scripts.Runtime.Commands;
 using Again.Scripts.Runtime.Components;
 using Again.Scripts.Runtime.Enums;
 using Again.Scripts.Runtime.LocalSheet;
+using Again.Scripts.Runtime.SaveData;
 using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
 using UnityEngine.Events;
@@ -107,6 +109,29 @@ namespace Again.Scripts.Runtime
         public void SetLocaleDict(Dictionary<string, List<string>> dict)
         {
             DialogueManager.SetLocaleDict(dict);
+        }
+
+        [ContextMenu("Save")]
+        public void Save()
+        {
+            var saveData = new AgainSystemSaveData
+            {
+                cameraManagerSaveData = CameraManager.Save(),
+                imageManagerSaveData = ImageManager.Save(),
+                spineManagerSaveData = SpineManager.Save()
+            };
+            var str = JsonUtility.ToJson(saveData);
+            Debug.Log(str);
+            var path = Application.persistentDataPath + "/save.txt";
+            File.WriteAllText(path, str);
+        }
+
+        [ContextMenu("Load")]
+        public void Load()
+        {
+            var path = Application.persistentDataPath + "/save.txt";
+            var str = File.ReadAllText(path);
+            ImageManager.Load(str);
         }
     }
 }
