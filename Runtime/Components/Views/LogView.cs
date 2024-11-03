@@ -1,8 +1,10 @@
 using System.Collections.Generic;
-using Again.Scripts.Runtime.Common;
+using Again.Runtime.Common;
+using Again.Runtime.Components.Interfaces;
+using Again.Runtime.Components.Structs;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Views
 {
     public class LogView : MonoBehaviour, ILogView
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Common
+namespace Again.Runtime.Common
 {
     public static class JsonHelper
     {

@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Again.Scripts.Runtime.Commands;
-using Again.Scripts.Runtime.Commands.Camera;
-using Again.Scripts.Runtime.Commands.Image;
-using Again.Scripts.Runtime.Commands.OptionMenu;
-using Again.Scripts.Runtime.Commands.Spine;
-using Again.Scripts.Runtime.Commands.Transfer;
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Commands;
+using Again.Runtime.Commands.Camera;
+using Again.Runtime.Commands.Dialogue;
+using Again.Runtime.Commands.Image;
+using Again.Runtime.Commands.OptionMenu;
+using Again.Runtime.Commands.Spine;
+using Again.Runtime.Commands.Transfer;
+using Again.Runtime.Enums;
 using UnityEngine;
 
-namespace Again.Runtime.GoogleSheet
+namespace Again.Runtime.ScriptImpoter
 {
     public static class ScriptSheetReader
     {

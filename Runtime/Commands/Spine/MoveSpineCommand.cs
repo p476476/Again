@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Commands.Spine
+namespace Again.Runtime.Commands.Spine
 {
     public class MoveSpineCommand : Command
     {

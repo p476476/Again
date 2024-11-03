@@ -1,12 +1,12 @@
 using System;
-using Again.Scripts.Runtime.Commands.Camera;
-using Again.Scripts.Runtime.Common;
-using Again.Scripts.Runtime.Enums;
-using Again.Scripts.Runtime.SaveData;
+using Again.Runtime.Commands.Camera;
+using Again.Runtime.Common;
+using Again.Runtime.Enums;
+using Again.Runtime.Save.Structs;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Managers
 {
     public class CameraManager : MonoBehaviour
     {

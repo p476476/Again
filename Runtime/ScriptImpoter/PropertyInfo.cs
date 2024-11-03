@@ -1,4 +1,4 @@
-namespace Again.Runtime.GoogleSheet
+namespace Again.Runtime.ScriptImpoter
 {
     public struct PropertyInfo
     {

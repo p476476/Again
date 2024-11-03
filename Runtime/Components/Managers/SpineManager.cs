@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Again.Scripts.Runtime.Commands.Spine;
-using Again.Scripts.Runtime.Common;
-using Again.Scripts.Runtime.Enums;
-using Again.Scripts.Runtime.SaveData;
+using Again.Runtime.Commands.Spine;
+using Again.Runtime.Common;
+using Again.Runtime.Enums;
+using Again.Runtime.Save.Structs;
 using DG.Tweening;
 using Spine.Unity;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Managers
 {
     [Serializable]
     public class SpineInfo

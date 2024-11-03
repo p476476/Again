@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.SaveData
+namespace Again.Runtime.Save.Structs
 {
     [Serializable]
     public struct TransformSaveData

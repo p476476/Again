@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Again.Scripts.Runtime.Commands
+namespace Again.Runtime.Commands
 {
     public class EmitCommand : Command
     {

@@ -1,7 +1,7 @@
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Commands.Image
+namespace Again.Runtime.Commands.Image
 {
     public class ChangeImageColorCommand : Command
     {

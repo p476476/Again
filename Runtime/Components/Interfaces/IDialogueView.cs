@@ -1,7 +1,7 @@
 using System;
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Interfaces
 {
     public interface IDialogueView
     {

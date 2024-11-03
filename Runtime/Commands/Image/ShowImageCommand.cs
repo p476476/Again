@@ -1,7 +1,7 @@
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 using DG.Tweening;
 
-namespace Again.Scripts.Runtime.Commands.Image
+namespace Again.Runtime.Commands.Image
 {
     public class ShowImageCommand : Command
     {

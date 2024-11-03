@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Enums
+namespace Again.Runtime.Enums
 {
     public enum Language
     {

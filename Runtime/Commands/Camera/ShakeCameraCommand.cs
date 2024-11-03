@@ -1,6 +1,6 @@
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 
-namespace Again.Scripts.Runtime.Commands.Camera
+namespace Again.Runtime.Commands.Camera
 {
     public class ShakeCameraCommand : Command
     {

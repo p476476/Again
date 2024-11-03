@@ -1,6 +1,6 @@
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 
-namespace Again.Scripts.Runtime.Commands.Image
+namespace Again.Runtime.Commands.Image
 {
     public class HideImageCommand : Command
     {

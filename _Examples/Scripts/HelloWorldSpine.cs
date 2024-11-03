@@ -1,6 +1,7 @@
+using Again.Runtime;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Examples
+namespace Again._Examples.Scripts
 {
     public class HelloWorldSpine : MonoBehaviour
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Again.Scripts.Runtime.Commands;
+using Again.Runtime.Commands;
 
-namespace Again.Scripts.Runtime
+namespace Again.Runtime.ScriptImpoter
 {
     public interface ISheetImporter
     {

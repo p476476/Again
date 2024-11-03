@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Again.Scripts.Runtime.Commands.Image;
-using Again.Scripts.Runtime.Common;
-using Again.Scripts.Runtime.Enums;
-using Again.Scripts.Runtime.SaveData;
+using Again.Runtime.Commands.Image;
+using Again.Runtime.Common;
+using Again.Runtime.Enums;
+using Again.Runtime.Save.Structs;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Managers
 {
     public class ImageManager : MonoBehaviour
     {

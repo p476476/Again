@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Again.Scripts.Runtime.Commands.OptionMenu
+namespace Again.Runtime.Commands.OptionMenu
 {
     public class OptionMenuCommand : Command
     {

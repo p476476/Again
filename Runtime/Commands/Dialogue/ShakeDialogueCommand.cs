@@ -1,6 +1,6 @@
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 
-namespace Again.Scripts.Runtime.Commands
+namespace Again.Runtime.Commands.Dialogue
 {
     public class ShakeDialogueCommand : Command
     {

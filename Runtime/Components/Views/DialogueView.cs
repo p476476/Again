@@ -1,6 +1,7 @@
 using System;
-using Again.Scripts.Runtime.Common;
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Common;
+using Again.Runtime.Components.Interfaces;
+using Again.Runtime.Enums;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -8,7 +9,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Views
 {
     internal enum TextAnimationState
     {

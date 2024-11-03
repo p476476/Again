@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.SaveData
+namespace Again.Runtime.Save.Structs
 {
     public class AgainSystemSaveData
     {

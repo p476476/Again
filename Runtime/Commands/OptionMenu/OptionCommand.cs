@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Commands.OptionMenu
+namespace Again.Runtime.Commands.OptionMenu
 {
     public class OptionCommand : Command
     {

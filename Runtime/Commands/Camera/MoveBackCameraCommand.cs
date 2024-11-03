@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Commands.Camera
+namespace Again.Runtime.Commands.Camera
 {
     public class MoveBackCameraCommand : Command
     {

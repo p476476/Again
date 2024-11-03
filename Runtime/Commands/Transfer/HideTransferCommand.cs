@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Commands.Transfer
+namespace Again.Runtime.Commands.Transfer
 {
     public class HideTransferCommand : Command
     {

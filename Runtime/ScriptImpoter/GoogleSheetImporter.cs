@@ -4,13 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Again.Scripts.Runtime;
-using Again.Scripts.Runtime.Commands;
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Commands;
+using Again.Runtime.Enums;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Again.Runtime.GoogleSheet
+namespace Again.Runtime.ScriptImpoter
 {
     public class GoogleSheetImporter : ISheetImporter
     {

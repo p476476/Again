@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Again.Scripts.Runtime.Common;
+using Again.Runtime.Common;
 using Spine.Unity;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.SaveData
+namespace Again.Runtime.Save.Structs
 {
     [Serializable]
     public class SpineObjectData

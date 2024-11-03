@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Managers
 {
     public class EventManager
     {

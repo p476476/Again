@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Again.Scripts.Runtime.Commands
+namespace Again.Runtime.Commands
 {
     public class WaitCommand : Command
     {

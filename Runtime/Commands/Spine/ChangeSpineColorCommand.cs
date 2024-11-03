@@ -1,7 +1,7 @@
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Enums;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Commands.Spine
+namespace Again.Runtime.Commands.Spine
 {
     public class ChangeSpineColorCommand : Command
     {

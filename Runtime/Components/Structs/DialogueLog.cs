@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Common
+namespace Again.Runtime.Components.Structs
 {
     public struct DialogueLog
     {

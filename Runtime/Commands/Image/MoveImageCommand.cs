@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Commands.Image
+namespace Again.Runtime.Commands.Image
 {
     public class MoveImageCommand : Command
     {

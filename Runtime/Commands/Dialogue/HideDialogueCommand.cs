@@ -1,4 +1,4 @@
-namespace Again.Scripts.Runtime.Commands
+namespace Again.Runtime.Commands.Dialogue
 {
     public class HideDialogueCommand : Command
 

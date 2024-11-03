@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Views
 {
     public class LogBlock : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Again.Scripts.Runtime.Common;
+using Again.Runtime.Components.Structs;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Interfaces
 {
     public interface ILogView
     {

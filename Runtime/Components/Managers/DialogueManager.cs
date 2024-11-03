@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Again.Scripts.Runtime.Commands;
-using Again.Scripts.Runtime.Commands.OptionMenu;
-using Again.Scripts.Runtime.Common;
-using Again.Scripts.Runtime.Enums;
+using Again.Runtime.Commands.Dialogue;
+using Again.Runtime.Commands.OptionMenu;
+using Again.Runtime.Components.Interfaces;
+using Again.Runtime.Components.Structs;
+using Again.Runtime.Enums;
 using UnityEngine;
 
-namespace Again.Scripts.Runtime.Components
+namespace Again.Runtime.Components.Managers
 {
     public class DialogueManager : MonoBehaviour
     {
