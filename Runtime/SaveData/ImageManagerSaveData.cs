@@ -20,6 +20,10 @@ namespace Again.Scripts.Runtime.SaveData
 
     public class ImageManagerSaveData
     {
+        public string BackgroundImageName;
+        public List<ImageObjectData> ImageObjectDataList;
+        public bool IsBackgroundImageActive;
+
         public static string ToJson(Dictionary<string, GameObject> imageObjectDict)
         {
             var list = new List<ImageObjectData>();
@@ -44,9 +48,13 @@ namespace Again.Scripts.Runtime.SaveData
             return str;
         }
 
-        public static List<ImageObjectData> FromJson(string json)
+        public static ImageManagerSaveData FromJson(string json)
         {
-            return JsonHelper.FromJson<ImageObjectData>(json).ToList();
+            var imageObjectDataList = JsonHelper.FromJson<ImageObjectData>(json).ToList();
+            return new ImageManagerSaveData
+            {
+                ImageObjectDataList = imageObjectDataList
+            };
         }
     }
 }

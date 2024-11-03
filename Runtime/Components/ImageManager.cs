@@ -31,10 +31,10 @@ namespace Again.Scripts.Runtime.Components
                 background.enabled = false;
         }
 
-        public void Load(string saveData)
+        public void Load(string saveDataStr)
         {
-            var list = ImageManagerSaveData.FromJson(saveData);
-            foreach (var data in list)
+            var saveData = ImageManagerSaveData.FromJson(saveDataStr);
+            foreach (var data in saveData.ImageObjectDataList)
             {
                 var go = Instantiate(imagePrefab, imageView.transform);
                 var rt = go.GetComponent<RectTransform>();
@@ -47,6 +47,8 @@ namespace Again.Scripts.Runtime.Components
                 spriteRenderer.sprite = Resources.Load<Sprite>($"Images/{data.spriteName}");
                 spriteRenderer.color = data.spriteColor;
             }
+            
+            
         }
 
         public string Save()
