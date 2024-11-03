@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Again.Scripts.Runtime.Common;
-using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
 
 namespace Again.Scripts.Runtime.Components
@@ -10,11 +9,10 @@ namespace Again.Scripts.Runtime.Components
         public Transform logContainer;
         public GameObject logPrefab;
         public List<LogBlock> logs;
-        private UIContainer _container;
 
         private void Awake()
         {
-            _container = GetComponent<UIContainer>();
+            transform.ResetAndHide();
         }
 
         public void Reset()
@@ -43,12 +41,12 @@ namespace Again.Scripts.Runtime.Components
 
         public void Show()
         {
-            _container.Show();
+            gameObject.SetActive(true);
         }
 
         public void Hide()
         {
-            _container.Hide();
+            gameObject.SetActive(false);
         }
     }
 }

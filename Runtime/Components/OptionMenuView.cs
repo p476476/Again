@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Doozy.Runtime.UIManager.Components;
-using Doozy.Runtime.UIManager.Containers;
+using Again.Scripts.Runtime.Common;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Again.Scripts.Runtime.Components
 {
@@ -12,25 +12,25 @@ namespace Again.Scripts.Runtime.Components
         private const int MaxOptionCount = 8;
         public GameObject buttonPrefab;
         public Transform buttonContainer;
-        private readonly List<UIButton> _optionButtons = new();
-        private UIContainer _container;
+        private readonly List<Button> _optionButtons = new();
 
         private void Awake()
         {
-            _container = GetComponent<UIContainer>();
+            transform.ResetAndHide();
+
             for (var i = 0; i < MaxOptionCount; i++)
             {
-                var button = Instantiate(buttonPrefab, buttonContainer).GetComponent<UIButton>();
+                var button = Instantiate(buttonPrefab, buttonContainer).GetComponent<Button>();
                 _optionButtons.Add(button);
             }
         }
 
         public void Reset()
         {
-            _container.InstantHide();
+            gameObject.SetActive(false);
             foreach (var button in _optionButtons)
             {
-                button.onClickEvent.RemoveAllListeners();
+                button.onClick.RemoveAllListeners();
                 button.gameObject.SetActive(false);
                 button.GetComponentInChildren<TMP_Text>().text = "";
             }
@@ -38,7 +38,6 @@ namespace Again.Scripts.Runtime.Components
 
         public void UpdateOptionTexts(List<string> options)
         {
-            if (_container.isHidden) return;
             for (var i = 0; i < options.Count; i++)
             {
                 var optionButton = _optionButtons[i];
@@ -53,28 +52,27 @@ namespace Again.Scripts.Runtime.Components
 
         public void ShowOptions(List<string> options, Action<int> onComplete)
         {
+            gameObject.SetActive(true);
             for (var i = 0; i < options.Count; i++)
             {
                 var optionButton = _optionButtons[i];
                 optionButton.gameObject.SetActive(true);
                 optionButton.GetComponentInChildren<TMP_Text>().text = options[i];
                 var optionId = i;
-                optionButton.GetComponentInChildren<UIButton>().onClickEvent.AddListener(() =>
+                optionButton.onClick.AddListener(() =>
                 {
                     Hide();
                     onComplete?.Invoke(optionId);
                 });
             }
-
-            _container.Show();
         }
 
         private void Hide()
         {
-            _container.Hide();
+            gameObject.SetActive(false);
             foreach (var button in _optionButtons)
             {
-                button.onClickEvent.RemoveAllListeners();
+                button.onClick.RemoveAllListeners();
                 button.gameObject.SetActive(false);
             }
         }

@@ -1,9 +1,9 @@
 using System;
+using Again.Scripts.Runtime.Common;
 using Again.Scripts.Runtime.Enums;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -35,7 +35,6 @@ namespace Again.Scripts.Runtime.Components
         [SerializeField] private InputActionAsset actionAsset;
         private AudioSource _audioSource;
 
-        private UIContainer _container;
         private Action _onComplete;
         private InputAction _speedUpAction;
         private TweenerCore<string, string, StringOptions> _textAnim;
@@ -44,12 +43,12 @@ namespace Again.Scripts.Runtime.Components
 
         private void Awake()
         {
-            _container = GetComponent<UIContainer>();
             nextButton.onClick.AddListener(_OnClickNextButton);
             _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
             _speedUpAction.performed += OnTextSpeedUp;
             _speedUpAction.canceled += OnTextSpeedUpCanceled;
             _audioSource = GetComponent<AudioSource>();
+            transform.ResetAndHide();
         }
 
         public void OnEnable()
@@ -64,7 +63,7 @@ namespace Again.Scripts.Runtime.Components
 
         public void Reset()
         {
-            _container.InstantHide();
+            gameObject.SetActive(false);
             _textAnim?.Kill();
             characterText.text = "";
             dialogueText.text = "";
@@ -79,8 +78,7 @@ namespace Again.Scripts.Runtime.Components
 
         public void ShowText(string character, string text, Action onComplete = null)
         {
-            if (_container.isHidden)
-                _container.Show();
+            gameObject.SetActive(true);
 
             if (_textAnim != null)
                 _textAnim.Kill();
@@ -109,7 +107,7 @@ namespace Again.Scripts.Runtime.Components
 
         public void Hide()
         {
-            _container.Hide();
+            gameObject.SetActive(false);
         }
 
         public void SetVisible(bool isVisible)
@@ -119,7 +117,7 @@ namespace Again.Scripts.Runtime.Components
 
         public void SetCharacterAndText(string character, string text)
         {
-            if (_container.isHidden)
+            if (!gameObject.activeSelf)
                 return;
 
             if (_textAnim != null)

@@ -1,7 +1,5 @@
 using Again.Scripts.Runtime;
-using Doozy.Runtime.Common.Extensions;
-using Doozy.Runtime.UIManager.Components;
-using Doozy.Runtime.UIManager.Containers;
+using Again.Scripts.Runtime.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,10 +8,15 @@ namespace Again.Runtime.GoogleSheet
 {
     public class SheetSelectView : MonoBehaviour
     {
-        public UIContainer animationContainer;
+        public Transform animationContainer;
         public RectTransform buttonContainer;
         public GameObject buttonPrefab;
         public TMP_Text titleText;
+
+        private void Awake()
+        {
+            transform.localPosition = Vector3.zero;
+        }
 
         public void Start()
         {
@@ -24,7 +27,7 @@ namespace Again.Runtime.GoogleSheet
 
         public void Show()
         {
-            animationContainer.Show();
+            gameObject.SetActive(true);
             UpdatePages();
         }
 
@@ -38,23 +41,17 @@ namespace Again.Runtime.GoogleSheet
                 var button = Instantiate(buttonPrefab, buttonContainer);
 
                 button.SetActive(true);
-                button.GetComponentInChildren<Text>().text = page;
+                button.GetComponentInChildren<TMP_Text>().text = page;
                 button
-                    .GetComponent<UIButton>()
-                    .onClickEvent.AddListener(() => OnClickPageButton(page));
+                    .GetComponent<Button>()
+                    .onClick.AddListener(() => OnClickPageButton(page));
             }
         }
 
         private void OnClickPageButton(string page)
         {
-            async void Call()
-            {
-                AgainSystem.Instance.Execute(page);
-                animationContainer.OnHiddenCallback.Event.RemoveAllListeners();
-            }
-
-            animationContainer.OnHiddenCallback.Event.AddListener(Call);
-            animationContainer.Hide();
+            animationContainer.gameObject.SetActive(false);
+            AgainSystem.Instance.Execute(page);
         }
     }
 }

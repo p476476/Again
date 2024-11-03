@@ -5,14 +5,7 @@ namespace Again.Scripts.Runtime.Commands.Transfer
         public override void Execute()
         {
             var view = AgainSystem.Instance.transferView;
-            view.Show();
-            view.OnVisibleCallback.Event.AddListener(OnViewVisible);
-        }
-
-        private void OnViewVisible()
-        {
-            var view = AgainSystem.Instance.transferView;
-            view.OnVisibleCallback.Event.RemoveListener(OnViewVisible);
+            view.gameObject.SetActive(true);
             AgainSystem.Instance.NextCommand();
         }
     }

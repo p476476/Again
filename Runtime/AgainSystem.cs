@@ -6,7 +6,6 @@ using Again.Scripts.Runtime.Components;
 using Again.Scripts.Runtime.Enums;
 using Again.Scripts.Runtime.LocalSheet;
 using Again.Scripts.Runtime.SaveData;
-using Doozy.Runtime.UIManager.Containers;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,7 +13,7 @@ namespace Again.Scripts.Runtime
 {
     public class AgainSystem : MonoBehaviour
     {
-        public UIContainer transferView;
+        public Transform transferView;
 
         [SerializeField] public UnityEvent OnScriptFinished = new();
         public string googleSheetId;
