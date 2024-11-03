@@ -20,6 +20,7 @@ namespace Again.Scripts.Runtime
 
         private List<Command> _commands;
         private int _currentCommandIndex = -1;
+        private bool _isPause;
 
         public ISheetImporter SheetImporter { get; private set; }
         public DialogueManager DialogueManager { get; private set; }
@@ -79,6 +80,12 @@ namespace Again.Scripts.Runtime
 
         public void NextCommand()
         {
+            if (_isPause)
+            {
+                Debug.Log("AgainSystem 暫停中");
+                return;
+            }
+
             _currentCommandIndex++;
             if (_currentCommandIndex < _commands.Count)
             {
@@ -108,6 +115,11 @@ namespace Again.Scripts.Runtime
         public void SetLocaleDict(Dictionary<string, List<string>> dict)
         {
             DialogueManager.SetLocaleDict(dict);
+        }
+
+        public void SetPause(bool isPause)
+        {
+            _isPause = isPause;
         }
 
         [ContextMenu("Save")]
