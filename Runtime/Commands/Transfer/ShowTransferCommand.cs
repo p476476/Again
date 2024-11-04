@@ -4,9 +4,8 @@ namespace Again.Runtime.Commands.Transfer
     {
         public override void Execute()
         {
-            var view = AgainSystem.Instance.transferView;
-            view.gameObject.SetActive(true);
-            AgainSystem.Instance.NextCommand();
+            var view = AgainSystem.Instance.TransferView;
+            view.Show(() => { AgainSystem.Instance.NextCommand(); });
         }
     }
 }

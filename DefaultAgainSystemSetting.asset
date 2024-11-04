@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 305ff93cb88f44ea8131db1e61590bdc, type: 3}
+  m_Name: DefaultAgainSystemSetting
+  m_EditorClassIdentifier: 
+  googleSheetId: 18vCXwuMSR7K0FUEEcHy7X5NzgtyWyUgr7sbeIRW74zs
+  dialogueView: {fileID: 4350434583265305516, guid: e54d3cff074db874189f9295b5ae72c5, type: 3}
+  logView: {fileID: 3856453055566464369, guid: c02b6ac2ce202c34b9527cce260b276e, type: 3}
+  optionMenuView: {fileID: 5642992602930132932, guid: c8c87a7781bebd44eb70213a29ca7fe7, type: 3}
+  transferView: {fileID: 7178296838187549749, guid: 5bbcd95ad98267845aa1da29c8016b5e, type: 3}

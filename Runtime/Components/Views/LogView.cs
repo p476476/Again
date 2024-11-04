@@ -15,6 +15,13 @@ namespace Again.Runtime.Components.Views
         private void Awake()
         {
             transform.ResetAndHide();
+            AgainSystem.Instance.EventManager.On("ShowLog", Show);
+        }
+
+        private void OnDestroy()
+        {
+            if (AgainSystem.Instance == null) return;
+            AgainSystem.Instance.EventManager.Off("ShowLog", Show);
         }
 
         public void Reset()

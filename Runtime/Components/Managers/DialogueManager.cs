@@ -11,9 +11,6 @@ namespace Again.Runtime.Components.Managers
 {
     public class DialogueManager : MonoBehaviour
     {
-        public GameObject dialogueView;
-        public GameObject optionMenuView;
-        public GameObject logView;
         private readonly List<DialogueLog> _logs = new();
         private Language _currentLanguage = Language.Chinese;
         private OptionMenuCommand _currentOptionMenuCommand;
@@ -25,18 +22,26 @@ namespace Again.Runtime.Components.Managers
         private ILogView _logView;
         private IOptionMenuView _optionMenuView;
 
-        private void Awake()
-        {
-            _dialogueView = dialogueView.GetComponent<IDialogueView>();
-            _optionMenuView = optionMenuView.GetComponent<IOptionMenuView>();
-            if (logView != null) _logView = logView.GetComponent<ILogView>();
-        }
-
         public void Reset()
         {
             _dialogueView.Reset();
             _optionMenuView.Reset();
             _logView?.Reset();
+        }
+
+        public void Init(Transform uiCanvas, AgainSystemSetting setting)
+        {
+            var dialogueView = Instantiate(setting.dialogueView, uiCanvas);
+            var optionMenuView =
+                Instantiate(setting.optionMenuView, uiCanvas);
+            _dialogueView = dialogueView.GetComponent<IDialogueView>();
+            _optionMenuView = optionMenuView.GetComponent<IOptionMenuView>();
+
+            if (setting.logView != null)
+            {
+                var logView = Instantiate(setting.logView, uiCanvas);
+                if (logView != null) _logView = logView.GetComponent<ILogView>();
+            }
         }
 
         public void SetVisible(bool isVisible)

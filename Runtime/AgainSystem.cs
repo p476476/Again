@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Again.Runtime.Commands;
+using Again.Runtime.Components.Interfaces;
 using Again.Runtime.Components.Managers;
 using Again.Runtime.Enums;
 using Again.Runtime.Save.Structs;
@@ -12,15 +13,15 @@ namespace Again.Runtime
 {
     public class AgainSystem : MonoBehaviour
     {
-        public Transform transferView;
-
-        [SerializeField] public UnityEvent OnScriptFinished = new();
-        public string googleSheetId;
+        public AgainSystemSetting setting;
+        [SerializeField] private Transform uiCanvas;
 
         private List<Command> _commands;
         private int _currentCommandIndex = -1;
         private bool _isPause;
 
+        public UnityEvent OnScriptFinished { get; } = new();
+        public ITransferView TransferView { get; private set; }
         public ISheetImporter SheetImporter { get; private set; }
         public DialogueManager DialogueManager { get; private set; }
         public SpineManager SpineManager { get; private set; }
@@ -41,20 +42,14 @@ namespace Again.Runtime
             SpineManager = GetComponent<SpineManager>();
             CameraManager = GetComponent<CameraManager>();
             ImageManager = GetComponent<ImageManager>();
+            TransferView = Instantiate(setting.transferView, uiCanvas).GetComponent<ITransferView>();
+            DialogueManager.Init(uiCanvas, setting);
 
-            if (string.IsNullOrEmpty(googleSheetId))
+            if (string.IsNullOrEmpty(setting.googleSheetId))
                 SheetImporter = new LocalSheetImporter();
             else
-                SheetImporter = new GoogleSheetImporter(googleSheetId);
+                SheetImporter = new GoogleSheetImporter(setting.googleSheetId);
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
-            EventManager.On<List<string>>("test", Test);
-        }
-
-        [ContextMenu("Test")]
-        public void Test(List<string> list)
-        {
-            // Execute("test1");
-            foreach (var item in list) Debug.Log(item);
         }
 
         public async void Execute(string scriptName)

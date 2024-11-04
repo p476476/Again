@@ -24,6 +24,7 @@ namespace Again.Runtime.Components.Views
         public Text characterText;
         public Text dialogueText;
         public Button nextButton;
+        public Button logButton;
         public float textSpeed = 0.01f;
         public int textSize = 50;
         public bool isAutoNext;
@@ -45,6 +46,7 @@ namespace Again.Runtime.Components.Views
         private void Awake()
         {
             nextButton.onClick.AddListener(_OnClickNextButton);
+            logButton.onClick.AddListener(() => AgainSystem.Instance.EventManager.Emit("ShowLog"));
             _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
             _speedUpAction.performed += OnTextSpeedUp;
             _speedUpAction.canceled += OnTextSpeedUpCanceled;
