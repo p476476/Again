@@ -48,7 +48,7 @@ namespace Again.Runtime
             if (string.IsNullOrEmpty(setting.googleSheetId))
                 SheetImporter = new LocalSheetImporter();
             else
-                SheetImporter = new GoogleSheetImporter(setting.googleSheetId);
+                SheetImporter = new GoogleSheetImporter(setting.googleSheetId, setting.googleApiKey);
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
         }
 

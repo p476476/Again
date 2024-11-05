@@ -6,6 +6,7 @@ namespace Again.Runtime
     public class AgainSystemSetting : ScriptableObject
     {
         public string googleSheetId = "18vCXwuMSR7K0FUEEcHy7X5NzgtyWyUgr7sbeIRW74zs";
+        public string googleApiKey = "";
         public GameObject dialogueView;
         public GameObject logView;
         public GameObject optionMenuView;

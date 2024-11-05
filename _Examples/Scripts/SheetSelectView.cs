@@ -1,3 +1,4 @@
+using System.Linq;
 using Again.Runtime;
 using Again.Runtime.Common;
 using Again.Runtime.ScriptImpoter;
@@ -37,6 +38,10 @@ namespace Again._Examples.Scripts
             buttonContainer.DestroyChildren();
 
             var pages = await AgainSystem.Instance.SheetImporter.LoadScripts();
+            var blackList = new[] { "企劃使用說明", "Config", "CommandList", "SpineList", "Translation" };
+            pages.Sort();
+            pages.RemoveAll(page => blackList.Contains(page));
+
             foreach (var page in pages)
             {
                 var button = Instantiate(buttonPrefab, buttonContainer);

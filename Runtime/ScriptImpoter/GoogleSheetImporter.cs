@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Again.Runtime.Commands;
 using Again.Runtime.Enums;
 using JetBrains.Annotations;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace Again.Runtime.ScriptImpoter
@@ -19,10 +20,12 @@ namespace Again.Runtime.ScriptImpoter
         private const string PageListSheetName = "Config";
         private const string TranslationSheetName = "Translation";
         private static readonly HttpClient client = new();
+        private readonly string _apiKey;
         private readonly string _sheetID;
 
-        public GoogleSheetImporter([CanBeNull] string sheetID)
+        public GoogleSheetImporter([CanBeNull] string sheetID, string apiKey)
         {
+            _apiKey = apiKey;
             _sheetID = sheetID;
         }
 
@@ -31,16 +34,17 @@ namespace Again.Runtime.ScriptImpoter
             if (string.IsNullOrEmpty(_sheetID))
                 return new List<string>();
 
-            var url = string.Format(URLFormat, _sheetID, PageListSheetName);
+            var url = $"https://sheets.googleapis.com/v4/spreadsheets/{_sheetID}?key={_apiKey}";
+
             var data = await FetchData(url);
 
-            var grid = _ParseCsv(data);
+            var json = JObject.Parse(data);
 
-            var pageNames = grid.Select(row => row[0]).ToList();
-            pageNames.RemoveAt(0);
-            pageNames.RemoveAll(string.IsNullOrEmpty);
+            var sheetNames = new List<string>();
+            foreach (var sheet in json["sheets"]!)
+                sheetNames.Add(sheet["properties"]["title"].ToString());
 
-            return pageNames;
+            return sheetNames;
         }
 
         public async Task<List<Command>> LoadScript(string scriptName)

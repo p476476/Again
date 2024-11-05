@@ -85,10 +85,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9338cf60edfbf4badaaab87d77fea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setting: {fileID: 0}
-  OnScriptFinished:
-    m_PersistentCalls:
-      m_Calls: []
+  setting: {fileID: 11400000, guid: 47ec3062c8dc65545becbf50e3d20047, type: 2}
+  uiCanvas: {fileID: 712768158914587973}
 --- !u!114 &5347904448464433572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,7 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0182feea5f284c6f90856c514b1c1b45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiCanvas: {fileID: 712768158914587973}
 --- !u!114 &3843603877016306255
 MonoBehaviour:
   m_ObjectHideFlags: 0
