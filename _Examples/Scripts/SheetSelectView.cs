@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Again.Runtime;
 using Again.Runtime.Common;
+using Again.Runtime.Enums;
 using Again.Runtime.ScriptImpoter;
 using TMPro;
 using UnityEngine;
@@ -14,6 +16,13 @@ namespace Again._Examples.Scripts
         public RectTransform buttonContainer;
         public GameObject buttonPrefab;
         public TMP_Text titleText;
+
+        private readonly Dictionary<int, Language> _languageMap = new()
+        {
+            { 0, Language.Chinese },
+            { 1, Language.English },
+            { 2, Language.Japanese }
+        };
 
         private void Awake()
         {
@@ -31,6 +40,11 @@ namespace Again._Examples.Scripts
         {
             gameObject.SetActive(true);
             UpdatePages();
+        }
+
+        public void UpdateLanguage(int index)
+        {
+            AgainSystem.Instance.SetLanguage(_languageMap[index]);
         }
 
         public async void UpdatePages()
