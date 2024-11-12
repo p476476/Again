@@ -101,6 +101,24 @@ namespace Again.Runtime
             NextCommand();
         }
 
+        public void Stop()
+        {
+            CameraManager.Reset();
+            SpineManager.Reset();
+            ImageManager.Reset();
+            DialogueManager.Reset();
+            DialogueManager.Hide();
+
+            _currentCommandIndex = -1;
+            _commands.Clear();
+            _isPause = false;
+        }
+
+        public async void ReloadTranslation()
+        {
+            DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
+        }
+
         public void SetLanguage(Language language)
         {
             DialogueManager.SetLanguage(language);

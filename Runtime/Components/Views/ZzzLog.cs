@@ -8,7 +8,9 @@ namespace Again.Runtime.Components.Views
         private const uint Qsize = 15; // number of messages to keep
         private readonly Queue _myLogQueue = new();
 
-        private void Start() { }
+        private void Start()
+        {
+        }
 
         private void OnEnable()
         {
@@ -18,6 +20,11 @@ namespace Again.Runtime.Components.Views
         private void OnDisable()
         {
             Application.logMessageReceived -= HandleLog;
+        }
+
+        public void Clear()
+        {
+            _myLogQueue.Clear();
         }
 
         private void OnGUI()
@@ -32,6 +39,7 @@ namespace Again.Runtime.Components.Views
 
         private void HandleLog(string logString, string stackTrace, LogType type)
         {
+            if (type == LogType.Warning) return;
             _myLogQueue.Enqueue("[" + type + "] : " + logString);
             if (type == LogType.Exception)
                 _myLogQueue.Enqueue(stackTrace);

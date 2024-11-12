@@ -5,7 +5,28 @@ namespace Again.Runtime.Components.Managers
 {
     public class EventManager
     {
+        private readonly List<Delegate> _anyEventList = new();
         private readonly Dictionary<string, Delegate> _eventDict = new();
+
+        public void OnAny(Action<string> action)
+        {
+            _anyEventList.Add(action);
+        }
+
+        public void OffAny(Action<string> action)
+        {
+            _anyEventList.Remove(action);
+        }
+
+        public void OnAny<T>(Action<string, T> action)
+        {
+            _anyEventList.Add(action);
+        }
+
+        public void OffAny<T>(Action<string, T> action)
+        {
+            _anyEventList.Remove(action);
+        }
 
         public void On(string eventName, Action action)
         {
@@ -47,12 +68,18 @@ namespace Again.Runtime.Components.Managers
         {
             if (_eventDict.TryGetValue(eventName, out var action))
                 (action as Action)?.Invoke();
+
+            foreach (var anyEvent in _anyEventList)
+                (anyEvent as Action<string>)?.Invoke(eventName);
         }
 
         public void Emit<T>(string eventName, T param)
         {
             if (_eventDict.TryGetValue(eventName, out var action))
                 (action as Action<T>)?.Invoke(param);
+
+            foreach (var anyEvent in _anyEventList)
+                (anyEvent as Action<string, T>)?.Invoke(eventName, param);
         }
 
         public void Reset()
