@@ -25,9 +25,10 @@ namespace Again.Runtime.Components.Views
         public Text dialogueText;
         public Button nextButton;
         public Button logButton;
-        public float textSpeed = 0.01f;
+        public Button autoButton;
+        public Button skipButton;
+        public float textSpeed = 10f;
         public int textSize = 50;
-        public bool isAutoNext;
         public Sprite waitSprite;
         public Sprite nextSprite;
         public Image stateIcon;
@@ -36,6 +37,7 @@ namespace Again.Runtime.Components.Views
 
         [SerializeField] private InputActionAsset actionAsset;
         private AudioSource _audioSource;
+        private float _completeTimer;
 
         private Action _onComplete;
         private InputAction _speedUpAction;
@@ -43,15 +45,38 @@ namespace Again.Runtime.Components.Views
         private TextAnimationState _textAnimationState;
         private float _textSpeedScale = 1f;
 
-        private void Awake()
+        protected void Awake()
         {
             nextButton.onClick.AddListener(_OnClickNextButton);
             logButton.onClick.AddListener(() => AgainSystem.Instance.EventManager.Emit("ShowLog"));
+            autoButton.onClick.AddListener(_OnClickAutoButton);
+            skipButton.onClick.AddListener(() => AgainSystem.Instance.EventManager.Emit("ToggleSkip"));
             _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
             _speedUpAction.performed += OnTextSpeedUp;
             _speedUpAction.canceled += OnTextSpeedUpCanceled;
             _audioSource = GetComponent<AudioSource>();
             transform.ResetAndHide();
+        }
+
+        private void Start()
+        {
+            var isAutoNext = AgainSystem.Instance.GetAutoNext();
+            autoButton.GetComponent<Image>().color = isAutoNext ? Color.white : Color.gray;
+        }
+
+        private void Update()
+        {
+            if (_textAnimationState == TextAnimationState.Complete)
+                if (AgainSystem.Instance.GetAutoNext())
+                {
+                    _completeTimer += Time.deltaTime * _textSpeedScale;
+                    if (_completeTimer >= 1)
+                    {
+                        _completeTimer = 0;
+                        _textAnimationState = TextAnimationState.Wait;
+                        _onComplete?.Invoke();
+                    }
+                }
         }
 
         public void OnEnable()
@@ -93,16 +118,12 @@ namespace Again.Runtime.Components.Views
             if (_audioSource.gameObject.activeSelf)
                 _audioSource.Play();
             _textAnim = dialogueText
-                .DOText(text, text.Length * textSpeed / _textSpeedScale)
+                .DOText(text, text.Length / textSpeed / _textSpeedScale)
                 .OnComplete(() =>
                 {
+                    _completeTimer = 0;
                     stateIcon.sprite = nextSprite;
                     _textAnimationState = TextAnimationState.Complete;
-                    if (isAutoNext || _textSpeedScale > 1)
-                    {
-                        _textAnimationState = TextAnimationState.Wait;
-                        _onComplete?.Invoke();
-                    }
                 });
             stateIcon.sprite = waitSprite;
             _textAnimationState = TextAnimationState.Playing;
@@ -176,6 +197,13 @@ namespace Again.Runtime.Components.Views
             }
         }
 
+        private void _OnClickAutoButton()
+        {
+            var isAutoNext = !AgainSystem.Instance.GetAutoNext();
+            autoButton.GetComponent<Image>().color = isAutoNext ? Color.white : Color.gray;
+            AgainSystem.Instance.SetAutoNext(isAutoNext);
+        }
+
         public void SpeedUpText()
         {
             if (_textAnim != null)
@@ -200,12 +228,7 @@ namespace Again.Runtime.Components.Views
             if (_textAnim != null)
                 _textAnim.timeScale = SpeedUpScale;
             _textSpeedScale = SpeedUpScale;
-
-            if (_textAnimationState == TextAnimationState.Complete)
-            {
-                _textAnimationState = TextAnimationState.Wait;
-                _onComplete?.Invoke();
-            }
+            AgainSystem.Instance.SetAutoNext(true);
         }
 
         private void OnTextSpeedUpCanceled(InputAction.CallbackContext obj)
@@ -213,6 +236,7 @@ namespace Again.Runtime.Components.Views
             if (_textAnim != null)
                 _textAnim.timeScale = 1;
             _textSpeedScale = 1;
+            AgainSystem.Instance.SetAutoNext(false);
         }
     }
 }

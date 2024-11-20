@@ -18,6 +18,7 @@ namespace Again.Runtime
 
         private List<Command> _commands;
         private int _currentCommandIndex = -1;
+        private bool _isAutoNext;
         private bool _isPause;
 
         public UnityEvent OnScriptFinished { get; } = new();
@@ -132,6 +133,16 @@ namespace Again.Runtime
         public void SetPause(bool isPause)
         {
             _isPause = isPause;
+        }
+
+        public void SetAutoNext(bool isAutoNext)
+        {
+            _isAutoNext = isAutoNext;
+        }
+
+        public bool GetAutoNext()
+        {
+            return _isAutoNext;
         }
 
         [ContextMenu("Save")]

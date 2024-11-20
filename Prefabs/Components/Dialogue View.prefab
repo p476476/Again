@@ -624,9 +624,10 @@ MonoBehaviour:
   dialogueText: {fileID: 6938650381878890707}
   nextButton: {fileID: 5308113653332061098}
   logButton: {fileID: 1407023078233459999}
-  textSpeed: 0.1
+  autoButton: {fileID: 0}
+  skipButton: {fileID: 0}
+  textSpeed: 10
   textSize: 50
-  isAutoNext: 0
   waitSprite: {fileID: 21300000, guid: abb7d4a53ed53154cb5dfd1e64c7be8b, type: 3}
   nextSprite: {fileID: 21300000, guid: 77a3b5262c19b67439a793bd3bc393f8, type: 3}
   stateIcon: {fileID: 5035836839044210354}
