@@ -5,13 +5,14 @@ using Again.Runtime.Enums;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Again.Runtime.Components.Views
 {
-    internal enum TextAnimationState
+    public enum TextAnimationState
     {
         Wait,
         Playing,
@@ -21,8 +22,8 @@ namespace Again.Runtime.Components.Views
     public class DialogueView : MonoBehaviour, IDialogueView
     {
         private const float SpeedUpScale = 5;
-        public Text characterText;
-        public Text dialogueText;
+        public TMP_Text characterText;
+        public TMP_Text dialogueText;
         public Button nextButton;
         public Button logButton;
         public Button autoButton;
@@ -36,14 +37,14 @@ namespace Again.Runtime.Components.Views
         public GameObject characterContainer;
 
         [SerializeField] private InputActionAsset actionAsset;
-        private AudioSource _audioSource;
-        private float _completeTimer;
+        protected AudioSource _audioSource;
+        protected float _completeTimer;
 
-        private Action _onComplete;
+        protected Action _onComplete;
         private InputAction _speedUpAction;
-        private TweenerCore<string, string, StringOptions> _textAnim;
-        private TextAnimationState _textAnimationState;
-        private float _textSpeedScale = 1f;
+        protected TweenerCore<string, string, StringOptions> _textAnim;
+        protected TextAnimationState _textAnimationState;
+        protected float _textSpeedScale = 1f;
 
         protected void Awake()
         {
@@ -104,7 +105,7 @@ namespace Again.Runtime.Components.Views
             dialogueText.fontSize = (int)(textSize * scale);
         }
 
-        public void ShowText(string character, string text, Action onComplete = null)
+        public virtual void ShowText(string character, string text, Action onComplete = null)
         {
             gameObject.SetActive(true);
 
