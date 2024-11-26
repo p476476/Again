@@ -130,6 +130,7 @@ namespace Again.Runtime.Components.Managers
                 0
             );
 
+            var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.ShowType)
             {
                 case ShowAnimationType.None:
@@ -142,7 +143,7 @@ namespace Again.Runtime.Components.Managers
                             () => spineAnimation.skeleton.A,
                             x => spineAnimation.skeleton.A = x,
                             1,
-                            command.Duration
+                            duration
                         )
                         .OnComplete(() => onComplete?.Invoke());
                     break;
@@ -151,7 +152,7 @@ namespace Again.Runtime.Components.Managers
                     var pos = spineRT.localPosition;
                     spineRT.localPosition = new Vector3(-parentWidth / 2, pos.y, pos.z);
                     spineRT
-                        .DOLocalMoveX(pos.x, command.Duration)
+                        .DOLocalMoveX(pos.x, duration)
                         .OnComplete(() =>
                         {
                             onComplete?.Invoke();
@@ -163,7 +164,7 @@ namespace Again.Runtime.Components.Managers
                     pos = spineRT.localPosition;
                     spineRT.localPosition = new Vector3(parentWidth / 2, pos.y, pos.z);
                     spineRT.transform
-                        .DOLocalMoveX(pos.x, command.Duration)
+                        .DOLocalMoveX(pos.x, duration)
                         .OnComplete(() =>
                         {
                             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
@@ -224,6 +225,7 @@ namespace Again.Runtime.Components.Managers
 
             var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
             var goRT = go.GetComponent<RectTransform>();
+            var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.HideType)
             {
                 case HideAnimationType.None:
@@ -238,7 +240,7 @@ namespace Again.Runtime.Components.Managers
                             () => spineAnimation.skeleton.A,
                             x => spineAnimation.skeleton.A = x,
                             0,
-                            command.Duration
+                            duration
                         )
                         .OnComplete(() => _RemoveSpineAnimation(command.Name, onComplete));
                     break;
@@ -248,7 +250,7 @@ namespace Again.Runtime.Components.Managers
                                      spineAnimation.skeletonDataAsset.scale;
                     goRT.DOLocalMoveX(
                             (spineView.GetComponent<RectTransform>().rect.width + spineWidth) * -0.5f,
-                            command.Duration
+                            duration
                         )
                         .OnComplete(() =>
                         {
@@ -262,7 +264,7 @@ namespace Again.Runtime.Components.Managers
                                  spineAnimation.skeletonDataAsset.scale;
                     goRT.DOLocalMoveX(
                             (spineView.GetComponent<RectTransform>().rect.width + spineWidth) * 0.5f,
-                            command.Duration
+                            duration
                         )
                         .OnComplete(() =>
                         {
@@ -290,7 +292,7 @@ namespace Again.Runtime.Components.Managers
             go.GetComponent<RectTransform>()
                 .DOLocalMove(
                     new Vector3(command.PosX * parentWidth / 2, command.PosY * parentWidth / 2, 0),
-                    command.Duration
+                    command.IsSkip ? 0 : command.Duration
                 )
                 .OnComplete(() =>
                 {
@@ -318,7 +320,7 @@ namespace Again.Runtime.Components.Managers
 
             goRT.DOScale(
                     new Vector3(command.Scale, command.Scale, 1),
-                    command.Duration
+                    command.IsSkip ? 0 : command.Duration
                 )
                 .OnComplete(() =>
                 {
@@ -340,7 +342,7 @@ namespace Again.Runtime.Components.Managers
 
             var position = go.GetComponent<RectTransform>().localPosition;
             go.GetComponent<RectTransform>()
-                .DOLocalJump(position, command.JumpPower, command.JumpCount, command.Duration)
+                .DOLocalJump(position, command.JumpPower, command.JumpCount, command.IsSkip ? 0 : command.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
 
@@ -357,11 +359,12 @@ namespace Again.Runtime.Components.Managers
 
             var goRT = go.GetComponent<RectTransform>();
             var strength = command.Strength * ShakeFactor;
+            var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.ShakeType)
             {
                 case ShakeType.Horizontal:
                     goRT.DOShakePosition(
-                            command.Duration,
+                            duration,
                             Vector3.right * strength,
                             command.Vibrato,
                             command.Randomness,
@@ -372,7 +375,7 @@ namespace Again.Runtime.Components.Managers
                     break;
                 case ShakeType.Vertical:
                     goRT.DOShakePosition(
-                            command.Duration,
+                            duration,
                             Vector3.up * strength,
                             command.Vibrato,
                             command.Randomness,
@@ -383,7 +386,7 @@ namespace Again.Runtime.Components.Managers
                     break;
                 case ShakeType.HorizontalAndVertical:
                     goRT.DOShakePosition(
-                            command.Duration,
+                            duration,
                             strength,
                             command.Vibrato,
                             command.Randomness,

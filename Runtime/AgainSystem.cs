@@ -20,6 +20,7 @@ namespace Again.Runtime
         private int _currentCommandIndex = -1;
         private bool _isAutoNext;
         private bool _isPause;
+        private bool _isSkip;
 
         public UnityEvent OnScriptFinished { get; } = new();
         public ITransferView TransferView { get; private set; }
@@ -84,6 +85,7 @@ namespace Again.Runtime
             _currentCommandIndex++;
             if (_currentCommandIndex < _commands.Count)
             {
+                _commands[_currentCommandIndex].IsSkip = _isSkip;
                 _commands[_currentCommandIndex].Execute();
                 return;
             }
@@ -133,6 +135,16 @@ namespace Again.Runtime
         public void SetPause(bool isPause)
         {
             _isPause = isPause;
+        }
+
+        public void SetSkip(bool isSkip)
+        {
+            _isSkip = isSkip;
+        }
+
+        public bool GetSkip()
+        {
+            return _isSkip;
         }
 
         public void SetAutoNext(bool isAutoNext)

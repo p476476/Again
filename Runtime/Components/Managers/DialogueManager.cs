@@ -60,7 +60,7 @@ namespace Again.Runtime.Components.Managers
             _isDialogueShowing = true;
             _currentSayCommand = command;
             _dialogueView.ScaleText(command.Scale);
-            _dialogueView.ShowText(character, text, callback);
+            _dialogueView.ShowText(character, text, command.IsSkip, callback);
             _addLog(command);
             if (command.Voice != null) Debug.Log("Voice: " + command.Voice);
         }
@@ -84,7 +84,8 @@ namespace Again.Runtime.Components.Managers
 
         public void Shake(ShakeDialogueCommand command, Action onComplete = null)
         {
-            _dialogueView.Shake(command.Duration, command.Strength, command.Vibrato, command.Randomness,
+            _dialogueView.Shake(command.IsSkip ? 0 : command.Duration, command.Strength, command.Vibrato,
+                command.Randomness,
                 command.Snapping, command.FadeOut, command.ShakeType, onComplete);
         }
 

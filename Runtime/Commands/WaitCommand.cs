@@ -8,7 +8,8 @@ namespace Again.Runtime.Commands
 
         public override async void Execute()
         {
-            await Task.Delay((int)(Duration * 1000));
+            var duration = IsSkip ? 0 : (int)(Duration * 1000);
+            await Task.Delay(duration);
             AgainSystem.Instance.NextCommand();
         }
     }

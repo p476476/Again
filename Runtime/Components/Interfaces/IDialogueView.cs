@@ -6,7 +6,7 @@ namespace Again.Runtime.Components.Interfaces
     public interface IDialogueView
     {
         void Reset();
-        void ShowText(string character, string text, Action callback);
+        void ShowText(string character, string text, bool isSkip, Action callback);
         void Hide();
         void SetVisible(bool isVisible);
         void SetCharacterAndText(string getCharacterString, string getTextString);

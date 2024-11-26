@@ -51,7 +51,7 @@ namespace Again.Runtime.Components.Views
             nextButton.onClick.AddListener(_OnClickNextButton);
             logButton.onClick.AddListener(() => AgainSystem.Instance.EventManager.Emit("ShowLog"));
             autoButton.onClick.AddListener(_OnClickAutoButton);
-            skipButton.onClick.AddListener(() => AgainSystem.Instance.EventManager.Emit("ToggleSkip"));
+            skipButton.onClick.AddListener(_OnClickSkipButton);
             _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
             _speedUpAction.performed += OnTextSpeedUp;
             _speedUpAction.canceled += OnTextSpeedUpCanceled;
@@ -59,7 +59,7 @@ namespace Again.Runtime.Components.Views
             transform.ResetAndHide();
         }
 
-        private void Start()
+        protected void Start()
         {
             var isAutoNext = AgainSystem.Instance.GetAutoNext();
             autoButton.GetComponent<Image>().color = isAutoNext ? Color.white : Color.gray;
@@ -71,7 +71,7 @@ namespace Again.Runtime.Components.Views
                 if (AgainSystem.Instance.GetAutoNext())
                 {
                     _completeTimer += Time.deltaTime * _textSpeedScale;
-                    if (_completeTimer >= 1)
+                    if (_completeTimer >= 1 || AgainSystem.Instance.GetSkip())
                     {
                         _completeTimer = 0;
                         _textAnimationState = TextAnimationState.Wait;
@@ -105,7 +105,7 @@ namespace Again.Runtime.Components.Views
             dialogueText.fontSize = (int)(textSize * scale);
         }
 
-        public virtual void ShowText(string character, string text, Action onComplete = null)
+        public virtual void ShowText(string character, string text, bool isSkip, Action onComplete = null)
         {
             gameObject.SetActive(true);
 
@@ -119,7 +119,7 @@ namespace Again.Runtime.Components.Views
             if (_audioSource.gameObject.activeSelf)
                 _audioSource.Play();
             _textAnim = dialogueText
-                .DOText(text, text.Length / textSpeed / _textSpeedScale)
+                .DOText(text, isSkip ? 0 : text.Length / textSpeed / _textSpeedScale)
                 .OnComplete(() =>
                 {
                     _completeTimer = 0;
@@ -133,6 +133,7 @@ namespace Again.Runtime.Components.Views
         public void Hide()
         {
             gameObject.SetActive(false);
+            AgainSystem.Instance.SetSkip(false);
         }
 
         public void SetVisible(bool isVisible)
@@ -203,6 +204,13 @@ namespace Again.Runtime.Components.Views
             var isAutoNext = !AgainSystem.Instance.GetAutoNext();
             autoButton.GetComponent<Image>().color = isAutoNext ? Color.white : Color.gray;
             AgainSystem.Instance.SetAutoNext(isAutoNext);
+        }
+
+        private void _OnClickSkipButton()
+        {
+            var isSkipNext = !AgainSystem.Instance.GetSkip();
+            skipButton.GetComponent<Image>().color = isSkipNext ? Color.white : Color.gray;
+            AgainSystem.Instance.SetSkip(isSkipNext);
         }
 
         public void SpeedUpText()

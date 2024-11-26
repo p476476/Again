@@ -41,20 +41,21 @@ namespace Again.Runtime.Components.Managers
         public void Shake(ShakeCameraCommand command, Action onComplete = null)
         {
             var cameraTransform = avgCamera.transform;
+            var duration = command.Duration;
             switch (command.ShakeType)
             {
                 case ShakeType.Horizontal:
-                    cameraTransform.DOShakePosition(command.Duration, Vector3.right * command.Strength, command.Vibrato,
+                    cameraTransform.DOShakePosition(duration, Vector3.right * command.Strength, command.Vibrato,
                             command.Randomness, command.Snapping, command.FadeOut)
                         .OnComplete(() => onComplete?.Invoke());
                     break;
                 case ShakeType.Vertical:
-                    cameraTransform.DOShakePosition(command.Duration, Vector3.up * command.Strength, command.Vibrato,
+                    cameraTransform.DOShakePosition(duration, Vector3.up * command.Strength, command.Vibrato,
                             command.Randomness, command.Snapping, command.FadeOut)
                         .OnComplete(() => onComplete?.Invoke());
                     break;
                 case ShakeType.HorizontalAndVertical:
-                    cameraTransform.DOShakePosition(command.Duration, command.Strength,
+                    cameraTransform.DOShakePosition(duration, command.Strength,
                             command.Vibrato, command.Randomness, command.Snapping, command.FadeOut)
                         .OnComplete(() => onComplete?.Invoke());
                     break;
@@ -80,7 +81,7 @@ namespace Again.Runtime.Components.Managers
             avgCamera.transform.DOMove(endPosition, duration).OnComplete(() => onComplete?.Invoke());
         }
 
-        public void MoveBackCamera(MoveBackCameraCommand cameraCommand, Action onComplete = null)
+        public void MoveBackCamera(MoveBackCameraCommand command, Action onComplete = null)
         {
             //if is orthographic camera
             if (avgCamera.orthographic)
@@ -90,7 +91,7 @@ namespace Again.Runtime.Components.Managers
                 return;
             }
 
-            avgCamera.transform.DOMove(_originalPosition, cameraCommand.Duration)
+            avgCamera.transform.DOMove(_originalPosition, command.IsSkip ? 0 : command.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
     }

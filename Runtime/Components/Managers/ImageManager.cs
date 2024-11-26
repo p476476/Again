@@ -47,8 +47,6 @@ namespace Again.Runtime.Components.Managers
                 spriteRenderer.sprite = Resources.Load<Sprite>($"Images/{data.spriteName}");
                 spriteRenderer.color = data.spriteColor;
             }
-            
-            
         }
 
         public string Save()
@@ -93,6 +91,7 @@ namespace Again.Runtime.Components.Managers
 
             _imageObjectDict.Add(command.Name, go);
 
+            var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.ShowType)
             {
                 case ShowAnimationType.None:
@@ -100,19 +99,19 @@ namespace Again.Runtime.Components.Managers
                     break;
                 case ShowAnimationType.Fade:
                     spriteRenderer
-                        .DOFade(1, command.Duration)
+                        .DOFade(1, duration)
                         .OnComplete(() => onComplete?.Invoke());
                     break;
                 case ShowAnimationType.SlideFromLeft:
                     var localPosition = rt.localPosition;
                     rt.localPosition = new Vector3(-parentWidth / 2, localPosition.y, 0);
-                    rt.DOLocalMoveX(localPosition.x, command.Duration)
+                    rt.DOLocalMoveX(localPosition.x, duration)
                         .OnComplete(() => onComplete?.Invoke());
                     break;
                 case ShowAnimationType.SlideFromRight:
                     var localPosition1 = rt.localPosition;
                     rt.localPosition = new Vector3(parentWidth / 2, localPosition1.y, 0);
-                    rt.DOLocalMoveX(localPosition1.x, command.Duration)
+                    rt.DOLocalMoveX(localPosition1.x, duration)
                         .OnComplete(() => onComplete?.Invoke());
                     break;
             }
@@ -153,6 +152,7 @@ namespace Again.Runtime.Components.Managers
             var rt = go.GetComponent<RectTransform>();
             var spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
             var parentWidth = imageView.GetComponent<RectTransform>().rect.width;
+            var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.HideType)
             {
                 case HideAnimationType.None:
@@ -161,7 +161,7 @@ namespace Again.Runtime.Components.Managers
                     break;
                 case HideAnimationType.Fade:
                     spriteRenderer
-                        .DOFade(0, command.Duration)
+                        .DOFade(0, duration)
                         .OnComplete(() =>
                         {
                             Destroy(spriteRenderer.transform.parent.gameObject);
@@ -169,7 +169,7 @@ namespace Again.Runtime.Components.Managers
                         });
                     break;
                 case HideAnimationType.SlideToLeft:
-                    rt.DOLocalMoveX((parentWidth + rt.rect.width * rt.localScale.x) * -0.5f, command.Duration)
+                    rt.DOLocalMoveX((parentWidth + rt.rect.width * rt.localScale.x) * -0.5f, duration)
                         .OnComplete(() =>
                         {
                             Destroy(spriteRenderer.transform.parent.gameObject);
@@ -177,7 +177,7 @@ namespace Again.Runtime.Components.Managers
                         });
                     break;
                 case HideAnimationType.SlideToRight:
-                    rt.DOLocalMoveX((parentWidth + rt.rect.width * rt.localScale.x) * 0.5f, command.Duration)
+                    rt.DOLocalMoveX((parentWidth + rt.rect.width * rt.localScale.x) * 0.5f, duration)
                         .OnComplete(() =>
                         {
                             Destroy(spriteRenderer.transform.parent.gameObject);
@@ -221,7 +221,7 @@ namespace Again.Runtime.Components.Managers
             var rt = go.GetComponent<RectTransform>();
             PivotTool.SetPivotInWorldSpace(rt, new Vector2(command.AnchorX, command.AnchorY));
             rt.pivot = new Vector2(command.AnchorX, command.AnchorY);
-            rt.DOScale(new Vector3(command.Scale, command.Scale, 1), command.Duration)
+            rt.DOScale(new Vector3(command.Scale, command.Scale, 1), command.IsSkip ? 0 : command.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
 
@@ -237,7 +237,7 @@ namespace Again.Runtime.Components.Managers
 
             var rt = go.GetComponent<RectTransform>();
             var position = rt.localPosition;
-            rt.DOLocalJump(position, command.JumpPower, command.JumpCount, command.Duration)
+            rt.DOLocalJump(position, command.JumpPower, command.JumpCount, command.IsSkip ? 0 : command.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
 
@@ -253,11 +253,12 @@ namespace Again.Runtime.Components.Managers
 
             var goRT = go.GetComponent<RectTransform>();
             var strength = command.Strength * ShakeFactor;
+            var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.ShakeType)
             {
                 case ShakeType.Horizontal:
                     goRT.DOShakePosition(
-                            command.Duration,
+                            duration,
                             Vector3.right * strength,
                             command.Vibrato,
                             command.Randomness,
@@ -268,7 +269,7 @@ namespace Again.Runtime.Components.Managers
                     break;
                 case ShakeType.Vertical:
                     goRT.DOShakePosition(
-                            command.Duration,
+                            duration,
                             Vector3.up * strength,
                             command.Vibrato,
                             command.Randomness,
@@ -279,7 +280,7 @@ namespace Again.Runtime.Components.Managers
                     break;
                 case ShakeType.HorizontalAndVertical:
                     goRT.DOShakePosition(
-                            command.Duration,
+                            duration,
                             strength,
                             command.Vibrato,
                             command.Randomness,
