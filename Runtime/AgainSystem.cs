@@ -115,6 +115,7 @@ namespace Again.Runtime
             _currentCommandIndex = -1;
             _commands.Clear();
             _isPause = false;
+            _isSkip = false;
         }
 
         public async void ReloadTranslation()
