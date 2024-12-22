@@ -98,6 +98,7 @@ namespace Again.Runtime.Components.Views
             dialogueText.text = "";
             stateIcon.sprite = waitSprite;
             _textAnimationState = TextAnimationState.Wait;
+            _onComplete = null;
         }
 
         public void ScaleText(float scale)

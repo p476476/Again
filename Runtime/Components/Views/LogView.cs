@@ -31,7 +31,7 @@ namespace Again.Runtime.Components.Views
             logs.Clear();
         }
 
-        public void Add(DialogueLog log)
+        public virtual void Add(DialogueLog log)
         {
             var logObject = Instantiate(logPrefab, logContainer);
             logObject.SetActive(true);

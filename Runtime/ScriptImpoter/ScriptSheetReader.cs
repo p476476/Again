@@ -55,7 +55,8 @@ namespace Again.Runtime.ScriptImpoter
                 { "OptionMenuEnd", CreateOptionMenuEndCommand },
                 { "Option", CreateOptionCommand },
                 { "LookAtImage", CreateLookAtImageCommand },
-                { "Emit", CreateEmitCommand }
+                { "Emit", CreateEmitCommand },
+                { "Call", CreateCallCommand}
             };
 
 
@@ -558,6 +559,18 @@ namespace Again.Runtime.ScriptImpoter
             }
 
             command.Parameters = parameters;
+            return command;
+        }
+        
+        private static Command CreateCallCommand(Dictionary<string, string> arg)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "ScriptName", Type = "string", CanBeEmpty = false }
+            };
+
+            var command = new CallCommand();
+            SetProperties(command, propertyInfos, arg);
             return command;
         }
 

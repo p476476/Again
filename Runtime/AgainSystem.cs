@@ -56,8 +56,10 @@ namespace Again.Runtime
 
         public async void Execute(string scriptName)
         {
+            var commands = await SheetImporter.LoadScript(scriptName);
+            Stop();
             CameraManager.avgCamera.enabled = true;
-            RunCommands(await SheetImporter.LoadScript(scriptName));
+            RunCommands(commands);
         }
 
         public void RunCommands(List<Command> commands)
