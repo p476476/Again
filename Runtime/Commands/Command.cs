@@ -4,6 +4,7 @@ namespace Again.Runtime.Commands
     {
         public int Id { get; set; }
         public bool IsSkip { get; set; }
+        public bool IsJoin { get; set; } = false;
         public abstract void Execute();
     }
 }

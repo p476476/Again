@@ -89,6 +89,11 @@ namespace Again.Runtime
             {
                 _commands[_currentCommandIndex].IsSkip = _isSkip;
                 _commands[_currentCommandIndex].Execute();
+
+                var nextCommand = _currentCommandIndex + 1 < _commands.Count
+                    ? _commands[_currentCommandIndex + 1]
+                    : null;
+                if (nextCommand != null && nextCommand.IsJoin) NextCommand();
                 return;
             }
 

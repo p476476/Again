@@ -87,6 +87,7 @@ namespace Again.Runtime.ScriptImpoter
                 if (CommandCreators.TryGetValue(commandString, out var creator))
                 {
                     var command = creator(parameterDict);
+                    command.IsJoin = parameterDict.ContainsKey("Join");
                     if (command != null)
                     {
                         command.Id = _currentCommandIndex;
