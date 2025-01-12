@@ -98,6 +98,7 @@ namespace Again.Runtime.Components.Managers
                     onComplete?.Invoke();
                     break;
                 case ShowAnimationType.Fade:
+                    spriteRenderer.color = new Color(1, 1, 1, 0);
                     spriteRenderer
                         .DOFade(1, duration)
                         .OnComplete(() => onComplete?.Invoke());
