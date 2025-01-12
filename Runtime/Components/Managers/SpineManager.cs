@@ -212,6 +212,24 @@ namespace Again.Runtime.Components.Managers
             spineAnimation.ApplyAnimation();
         }
 
+        public void ChangeSpines(ChangeSpinesCommand command)
+        {
+            if (!_spineGameObjectDict.ContainsKey(command.Name))
+            {
+                Debug.LogError("Spine not found: " + command.Name);
+                return;
+            }
+
+            var go = _spineGameObjectDict[command.Name];
+
+            var spineAnimation = go.GetComponentInChildren<SkeletonAnimation>();
+
+            for (var i = 0; i < command.Animations.Count; i++)
+                _AddAnimation(spineAnimation, command.Animations[i],
+                    i == command.Animations.Count - 1 && command.IsLoop,
+                    command.Id);
+        }
+
         public void Hide(HideSpineCommand command, Action onComplete = null)
         {
             if (!_spineGameObjectDict.ContainsKey(command.Name))
@@ -463,6 +481,21 @@ namespace Again.Runtime.Components.Managers
             try
             {
                 anim.AnimationState.SetAnimation(0, animationName, isLoop);
+            }
+            catch (Exception)
+            {
+                Debug.LogError($"Line {commandIndex} 找不到 Animation: {animationName}");
+            }
+        }
+
+        private void _AddAnimation(SkeletonAnimation anim, string animationName, bool isLoop, int commandIndex)
+        {
+            if (string.IsNullOrEmpty(animationName))
+                return;
+
+            try
+            {
+                anim.AnimationState.AddAnimation(0, animationName, isLoop, 0);
             }
             catch (Exception)
             {

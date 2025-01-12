@@ -33,6 +33,7 @@ namespace Again.Runtime.ScriptImpoter
                 { "HideDialogue", CreateHideDialogueCommand },
                 { "ChangeSpineColor", CreateChangeSpineColorCommand },
                 { "ChangeSpine", CreateChangeSpineCommand },
+                { "ChangeSpines", CreateChangeSpinesCommand },
                 { "HideSpine", CreateHideSpineCommand },
                 { "JumpSpine", CreateJumpSpineCommand },
                 { "MoveSpine", CreateMoveSpineCommand },
@@ -56,7 +57,7 @@ namespace Again.Runtime.ScriptImpoter
                 { "Option", CreateOptionCommand },
                 { "LookAtImage", CreateLookAtImageCommand },
                 { "Emit", CreateEmitCommand },
-                { "Call", CreateCallCommand}
+                { "Call", CreateCallCommand }
             };
 
 
@@ -460,6 +461,27 @@ namespace Again.Runtime.ScriptImpoter
             };
 
             var command = new ChangeSpineCommand();
+            SetProperties(command, propertyInfos, dict);
+            return command;
+        }
+
+        private static ChangeSpinesCommand CreateChangeSpinesCommand(
+            Dictionary<string, string> dict
+        )
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "Skin", Type = "string", CanBeEmpty = true },
+                new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true }
+            };
+            dict.TryGetValue("Animations", out var animsStr);
+
+            var animations = new List<string>();
+            if (!string.IsNullOrEmpty(animsStr)) animations.AddRange(animsStr.Split(','));
+
+            var command = new ChangeSpinesCommand();
+            command.Animations = animations;
             SetProperties(command, propertyInfos, dict);
             return command;
         }
