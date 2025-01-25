@@ -50,8 +50,8 @@ namespace Again.Runtime.Components.Views
         {
             nextButton.onClick.AddListener(_OnClickNextButton);
             logButton.onClick.AddListener(() => AgainSystem.Instance.EventManager.Emit("ShowLog"));
-            autoButton.onClick.AddListener(_OnClickAutoButton);
-            skipButton.onClick.AddListener(_OnClickSkipButton);
+            autoButton?.onClick.AddListener(_OnClickAutoButton);
+            skipButton?.onClick.AddListener(_OnClickSkipButton);
             _speedUpAction = actionAsset.FindActionMap("Dialogue").FindAction("SpeedUpText");
             _speedUpAction.performed += OnTextSpeedUp;
             _speedUpAction.canceled += OnTextSpeedUpCanceled;

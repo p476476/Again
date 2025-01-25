@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Again.Runtime.Commands;
 using Again.Runtime.Enums;
 using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace Again.Runtime.ScriptImpoter
