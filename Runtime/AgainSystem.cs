@@ -30,6 +30,8 @@ namespace Again.Runtime
         public ImageManager ImageManager { get; private set; }
         public CameraManager CameraManager { get; private set; }
         public EventManager EventManager { get; private set; }
+        public AudioManager AudioManager { get; }
+
         public static AgainSystem Instance { get; private set; }
 
         private async void Awake()

@@ -57,7 +57,8 @@ namespace Again.Runtime.ScriptImpoter
                 { "Option", CreateOptionCommand },
                 { "LookAtImage", CreateLookAtImageCommand },
                 { "Emit", CreateEmitCommand },
-                { "Call", CreateCallCommand }
+                { "Call", CreateCallCommand },
+                { "PlaySound", CreatePlaySoundCommand }
             };
 
 
@@ -103,6 +104,18 @@ namespace Again.Runtime.ScriptImpoter
 
             return commands;
         }
+
+        private static Command CreatePlaySoundCommand(Dictionary<string, string> arg)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "SoundName", Type = "string", CanBeEmpty = false }
+            };
+            var command = new PlaySoundCommand();
+            SetProperties(command, propertyInfos, arg);
+            return command;
+        }
+
 
         private static Command CreateLookAtImageCommand(Dictionary<string, string> arg)
         {
@@ -584,7 +597,7 @@ namespace Again.Runtime.ScriptImpoter
             command.Parameters = parameters;
             return command;
         }
-        
+
         private static Command CreateCallCommand(Dictionary<string, string> arg)
         {
             var propertyInfos = new List<PropertyInfo>
