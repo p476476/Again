@@ -79,6 +79,7 @@ namespace Again.Runtime.Components.Managers
             var spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
             go.transform.SetParent(imageView.transform, false);
             spriteRenderer.sprite = sprite;
+            spriteRenderer.sortingOrder = command.Order;
             rt.anchorMin = new Vector2(0.5f, 0.5f);
             rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.sizeDelta = new Vector2(spriteRenderer.size.x, spriteRenderer.size.y);

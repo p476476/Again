@@ -89,7 +89,8 @@ namespace Again.Runtime.Components.Managers
                     spineObjectData.animationName,
                     spineObjectData.skinName,
                     spineObjectData.isLoop,
-                    spineInfo
+                    spineInfo,
+                    10
                 );
 
                 var spineRT = spineGameObject.GetComponent<RectTransform>();
@@ -131,6 +132,7 @@ namespace Again.Runtime.Components.Managers
                 command.Skin,
                 command.IsLoop,
                 spineInfo,
+                command.Order,
                 command.Id
             );
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
@@ -198,7 +200,7 @@ namespace Again.Runtime.Components.Managers
         }
 
         private GameObject CreateSpineGameObject(string spineName, string animationName,
-            string skinName, bool isLoop, SpineInfo spineInfo, int id = 0)
+            string skinName, bool isLoop, SpineInfo spineInfo, int order, int id = 0)
         {
             var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
             spineGameObject.name = spineName;

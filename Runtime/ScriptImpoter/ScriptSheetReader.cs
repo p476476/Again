@@ -193,7 +193,8 @@ namespace Again.Runtime.ScriptImpoter
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosY", Type = "float", CanBeEmpty = true },
                 new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
-                new() { Name = "NextDuration", Type = "float", CanBeEmpty = true }
+                new() { Name = "NextDuration", Type = "float", CanBeEmpty = true },
+                new() { Name = "Order", Type = "int", CanBeEmpty = true }
             };
 
             var command = new ShowImageCommand();
@@ -350,7 +351,8 @@ namespace Again.Runtime.ScriptImpoter
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
                 new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true },
-                new() { Name = "Scale", Type = "float", CanBeEmpty = true }
+                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "Order", Type = "int", CanBeEmpty = true }
             };
 
             var showSpineCommand = new ShowSpineCommand();

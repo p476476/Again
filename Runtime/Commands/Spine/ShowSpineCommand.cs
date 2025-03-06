@@ -20,6 +20,8 @@ namespace Again.Runtime.Commands.Spine
 
         public bool IsLoop { get; set; } = true;
 
+        public int Order { get; set; } = 10;
+
         public override void Execute()
         {
             var spineManager = AgainSystem.Instance.SpineManager;
