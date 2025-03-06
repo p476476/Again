@@ -26,20 +26,24 @@ namespace Again.Runtime.Components.Managers
         private const float PhysicsFactor = 1f;
         public GameObject spineGameObjectPrefab;
         public GameObject spineView;
+        private readonly List<SpineInfo> _spineInfos = new();
         private Dictionary<string, GameObject> _spineGameObjectDict;
-        private List<SpineInfo> _spineInfos;
 
         private void Awake()
         {
             _spineGameObjectDict = new Dictionary<string, GameObject>();
-            _spineInfos = new List<SpineInfo>();
             var assets = Resources.LoadAll<SkeletonDataAsset>("Spines");
             foreach (var asset in assets)
+            {
+                var spineInfo = _spineInfos.Find(info => info.spineName == asset.name);
+                if (spineInfo != null) spineInfo.skeletonDataAsset = asset;
+
                 _spineInfos.Add(new SpineInfo
                 {
                     spineName = asset.name,
                     skeletonDataAsset = asset
                 });
+            }
         }
 
         public void Reset()
@@ -144,8 +148,8 @@ namespace Again.Runtime.Components.Managers
             );
             spineRT.localScale = new Vector3(command.Scale, command.Scale, 1);
             spineAnimation.GetComponent<RectTransform>().localPosition = new Vector3(
-                spineWidth * spineScale * (spineInfo.pivot.x - 0.5f),
-                spineHeight * spineScale * (spineInfo.pivot.y - 0.5f),
+                spineWidth * spineScale * spineInfo.offsetRatio.x,
+                spineHeight * spineScale * spineInfo.offsetRatio.y,
                 0
             );
 
