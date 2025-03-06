@@ -9,5 +9,6 @@ namespace Again.Runtime.ScriptImpoter
         public Task<List<string>> LoadScripts();
         public Task<List<Command>> LoadScript(string scriptName);
         public Task<Dictionary<string, List<string>>> LoadTranslation();
+        public Task<Dictionary<string, SpineInfo>> LoadSpineSetting();
     }
 }

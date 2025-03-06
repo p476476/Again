@@ -6,9 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Again.Runtime.Commands;
 using Again.Runtime.Enums;
-using JetBrains.Annotations;
 using Unity.Plastic.Newtonsoft.Json.Linq;
-using UnityEngine;
 
 namespace Again.Runtime.ScriptImpoter
 {
@@ -17,13 +15,14 @@ namespace Again.Runtime.ScriptImpoter
         private const string URLFormat =
             @"https://docs.google.com/spreadsheets/d/{0}/gviz/tq?tqx=out:csv&sheet={1}";
 
-        private const string PageListSheetName = "Config";
         private const string TranslationSheetName = "Translation";
+        private const string SpineSettingSheetName = "SpineSetting";
+
         private static readonly HttpClient client = new();
         private readonly string _apiKey;
         private readonly string _sheetID;
 
-        public GoogleSheetImporter([CanBeNull] string sheetID, string apiKey)
+        public GoogleSheetImporter(string sheetID, string apiKey)
         {
             _apiKey = apiKey;
             _sheetID = sheetID;
@@ -49,9 +48,6 @@ namespace Again.Runtime.ScriptImpoter
 
         public async Task<List<Command>> LoadScript(string scriptName)
         {
-            if (string.IsNullOrEmpty(_sheetID))
-                Debug.LogError("No sheet ID provided");
-
             var url = string.Format(URLFormat, _sheetID, scriptName);
             var data = await FetchData(url);
             var lines = data.Split(",\"\"\n").ToList();
@@ -70,9 +66,6 @@ namespace Again.Runtime.ScriptImpoter
 
         public async Task<Dictionary<string, List<string>>> LoadTranslation()
         {
-            if (string.IsNullOrEmpty(_sheetID))
-                Debug.LogError("No sheet ID provided");
-
             var url = string.Format(URLFormat, _sheetID, TranslationSheetName);
             var data = await FetchData(url);
             var lines = data.Split(",\"\"\n").ToList();
@@ -85,6 +78,24 @@ namespace Again.Runtime.ScriptImpoter
                 var rowString = line.Substring(1, line.Length - 2);
                 var values = rowString.Split("\",\"").ToList();
                 dict[values[0]] = values.GetRange(2, languageCount).ToList();
+            }
+
+            return dict;
+        }
+
+
+        public async Task<Dictionary<string, SpineInfo>> LoadSpineSetting()
+        {
+            var url = string.Format(URLFormat, _sheetID, SpineSettingSheetName);
+            var data = await FetchData(url);
+            var lines = data.Split(",\"\"\n").ToList();
+            lines.RemoveAt(0); // 移除標題列
+
+            var dict = new Dictionary<string, SpineInfo>();
+            foreach (var line in lines)
+            {
+                var values = line.Split("\",\"").ToList();
+                dict.Add(values[0], new SpineInfo(Convert.ToSingle(values[1]), Convert.ToSingle(values[2])));
             }
 
             return dict;

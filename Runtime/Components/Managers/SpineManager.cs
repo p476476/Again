@@ -17,7 +17,7 @@ namespace Again.Runtime.Components.Managers
 
         [SerializeField] public SkeletonDataAsset skeletonDataAsset;
 
-        [SerializeField] public Vector2 pivot = new(0.5f, 0);
+        [SerializeField] public Vector2 offsetRatio = new(0, 0);
     }
 
     public class SpineManager : MonoBehaviour
@@ -51,6 +51,25 @@ namespace Again.Runtime.Components.Managers
             }
 
             _spineGameObjectDict.Clear();
+        }
+
+        public void UpdateSpineInfos(Dictionary<string, ScriptImpoter.SpineInfo> spineDataDict)
+        {
+            foreach (var pair in spineDataDict)
+            {
+                var spineInfo = _spineInfos.Find(info => info.spineName == pair.Key);
+                if (spineInfo != null)
+                {
+                    spineInfo.offsetRatio = new Vector2(pair.Value.OffsetX, pair.Value.OffsetY);
+                    continue;
+                }
+
+                _spineInfos.Add(new SpineInfo
+                {
+                    spineName = pair.Key,
+                    offsetRatio = new Vector2(pair.Value.OffsetX, pair.Value.OffsetY)
+                });
+            }
         }
 
         public void Load(string saveData)

@@ -9,9 +9,9 @@ namespace Again.Runtime.ScriptImpoter
 {
     public class LocalSheetImporter : ISheetImporter
     {
-        private readonly List<string> _ignoreFiles = new() { "Translation" };
+        private readonly List<string> _ignoreFiles = new() { "Translation", "SpineSetting" };
 
-        public async Task<List<string>> LoadScripts()
+        public Task<List<string>> LoadScripts()
         {
             var files = Resources.LoadAll<TextAsset>("TSV");
             var scriptNames = new List<string>();
@@ -21,10 +21,10 @@ namespace Again.Runtime.ScriptImpoter
                 scriptNames.Add(file.name);
             }
 
-            return scriptNames;
+            return Task.FromResult(scriptNames);
         }
 
-        public async Task<List<Command>> LoadScript(string scriptName)
+        public Task<List<Command>> LoadScript(string scriptName)
         {
             var file = Resources.Load<TextAsset>($"TSV/{scriptName}");
             var lines = file.text.Split(Environment.NewLine).ToList();
@@ -33,13 +33,13 @@ namespace Again.Runtime.ScriptImpoter
             foreach (var line in lines) data.Add(line.Split("\t").ToList());
             var commands = ScriptSheetReader.Read(data);
 
-            return commands;
+            return Task.FromResult(commands);
         }
 
-        public async Task<Dictionary<string, List<string>>> LoadTranslation()
+        public Task<Dictionary<string, List<string>>> LoadTranslation()
         {
             var file = Resources.Load<TextAsset>("TSV/Translation");
-            if (file == null) return new Dictionary<string, List<string>>();
+            if (file == null) return Task.FromResult(new Dictionary<string, List<string>>());
             var lines = file.text.Split("\r\n").ToList();
             var dict = new Dictionary<string, List<string>>();
             for (var i = 1; i < lines.Count; i++)
@@ -49,7 +49,26 @@ namespace Again.Runtime.ScriptImpoter
                 dict[values[0]] = values.GetRange(2, values.Count - 2).ToList();
             }
 
-            return dict;
+            return Task.FromResult(dict);
+        }
+
+        public Task<Dictionary<string, SpineInfo>> LoadSpineSetting()
+        {
+            var file = Resources.Load<TextAsset>("TSV/SpineSetting");
+            if (file == null) return Task.FromResult(new Dictionary<string, SpineInfo>());
+            var lines = file.text.Split("\r\n").ToList();
+            var dict = new Dictionary<string, SpineInfo>();
+
+            for (var i = 1; i < lines.Count; i++)
+            {
+                var values = lines[i].Split("\t").ToList();
+                if (values.Count < 2) continue;
+                if (!float.TryParse(values[1], out var x)) x = 0;
+                if (!float.TryParse(values[2], out var y)) y = 0;
+                dict[values[0]] = new SpineInfo(x, y);
+            }
+
+            return Task.FromResult(dict);
         }
     }
 }

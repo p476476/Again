@@ -54,6 +54,7 @@ namespace Again.Runtime
             else
                 SheetImporter = new GoogleSheetImporter(setting.googleSheetId, setting.googleApiKey);
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
+            SpineManager.UpdateSpineInfos(await SheetImporter.LoadSpineSetting());
         }
 
         public async void Execute(string scriptName)

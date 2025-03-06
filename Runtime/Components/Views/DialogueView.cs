@@ -62,7 +62,8 @@ namespace Again.Runtime.Components.Views
         protected void Start()
         {
             var isAutoNext = AgainSystem.Instance.GetAutoNext();
-            autoButton.GetComponent<Image>().color = isAutoNext ? Color.white : Color.gray;
+            if (autoButton != null)
+                autoButton.GetComponent<Image>().color = isAutoNext ? Color.white : Color.gray;
         }
 
         private void Update()
