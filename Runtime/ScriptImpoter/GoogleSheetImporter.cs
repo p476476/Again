@@ -95,7 +95,12 @@ namespace Again.Runtime.ScriptImpoter
             foreach (var line in lines)
             {
                 var values = line.Split("\",\"").ToList();
-                dict.Add(values[0], new SpineInfo(Convert.ToSingle(values[1]), Convert.ToSingle(values[2])));
+                if (values.Count < 2) continue;
+                if (!float.TryParse(values[1], out var x)) x = 0;
+                if (!float.TryParse(values[2], out var y)) y = 0;
+                if (!float.TryParse(values[3], out var sx)) sx = 1;
+                if (!float.TryParse(values[4], out var sy)) sy = 1;
+                dict[values[0]] = new SpineInfo(x, y, sx, sy);
             }
 
             return dict;

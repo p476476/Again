@@ -18,6 +18,7 @@ namespace Again.Runtime.Components.Managers
         [SerializeField] public SkeletonDataAsset skeletonDataAsset;
 
         [SerializeField] public Vector2 offsetRatio = new(0, 0);
+        [SerializeField] public Vector2 scale = new(1, 1);
     }
 
     public class SpineManager : MonoBehaviour
@@ -65,13 +66,15 @@ namespace Again.Runtime.Components.Managers
                 if (spineInfo != null)
                 {
                     spineInfo.offsetRatio = new Vector2(pair.Value.OffsetX, pair.Value.OffsetY);
+                    spineInfo.scale = new Vector2(pair.Value.ScaleX, pair.Value.ScaleY);
                     continue;
                 }
 
                 _spineInfos.Add(new SpineInfo
                 {
                     spineName = pair.Key,
-                    offsetRatio = new Vector2(pair.Value.OffsetX, pair.Value.OffsetY)
+                    offsetRatio = new Vector2(pair.Value.OffsetX, pair.Value.OffsetY),
+                    scale = new Vector2(pair.Value.ScaleX, pair.Value.ScaleY)
                 });
             }
         }
@@ -89,8 +92,9 @@ namespace Again.Runtime.Components.Managers
                     spineObjectData.animationName,
                     spineObjectData.skinName,
                     spineObjectData.isLoop,
+                    10,
                     spineInfo,
-                    10
+                    0
                 );
 
                 var spineRT = spineGameObject.GetComponent<RectTransform>();
@@ -131,8 +135,8 @@ namespace Again.Runtime.Components.Managers
                 command.Animation,
                 command.Skin,
                 command.IsLoop,
-                spineInfo,
                 command.Order,
+                spineInfo,
                 command.Id
             );
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
@@ -148,12 +152,7 @@ namespace Again.Runtime.Components.Managers
                 command.PosY * parentWidth / 2,
                 0
             );
-            spineRT.localScale = new Vector3(command.Scale, command.Scale, 1);
-            spineAnimation.GetComponent<RectTransform>().localPosition = new Vector3(
-                spineWidth * spineScale * spineInfo.offsetRatio.x,
-                spineHeight * spineScale * spineInfo.offsetRatio.y,
-                0
-            );
+            spineRT.localScale = new Vector3(command.ScaleX * spineInfo.scale.x, command.ScaleY * spineInfo.scale.x, 1);
 
             var duration = command.IsSkip ? 0 : command.Duration;
             switch (command.ShowType)
@@ -200,7 +199,7 @@ namespace Again.Runtime.Components.Managers
         }
 
         private GameObject CreateSpineGameObject(string spineName, string animationName,
-            string skinName, bool isLoop, SpineInfo spineInfo, int order, int id = 0)
+            string skinName, bool isLoop, int order, SpineInfo spineInfo, int id)
         {
             var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
             spineGameObject.name = spineName;
@@ -213,6 +212,17 @@ namespace Again.Runtime.Components.Managers
             _SetAnimation(spineAnimation, animationName, isLoop, id);
             _SetSkin(spineAnimation, skinName, id);
             _spineGameObjectDict.Add(spineName, spineGameObject);
+
+
+            var spineWidth = spineAnimation.skeletonDataAsset.GetSkeletonData(true).Width;
+            var spineHeight = spineAnimation.skeletonDataAsset.GetSkeletonData(true).Height;
+            var spineScale = spineAnimation.skeletonDataAsset.scale;
+            var animationRt = spineAnimation.GetComponent<RectTransform>();
+            animationRt.localPosition = new Vector3(
+                spineWidth * spineScale * spineInfo.offsetRatio.x,
+                spineHeight * spineScale * spineInfo.offsetRatio.y,
+                0
+            );
 
             var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;
             material.SetColor("_Color", Color.white);

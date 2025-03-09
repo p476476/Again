@@ -16,7 +16,9 @@ namespace Again.Runtime.Commands.Spine
 
         public float PosY { get; set; } = 0;
 
-        public float Scale { get; set; } = 1f;
+        public float ScaleX { get; set; } = 1f;
+        
+        public float ScaleY { get; set; } = 1f;
 
         public bool IsLoop { get; set; } = true;
 

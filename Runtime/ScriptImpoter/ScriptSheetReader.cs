@@ -351,7 +351,8 @@ namespace Again.Runtime.ScriptImpoter
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
                 new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true },
-                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "ScaleX", Type = "float", CanBeEmpty = true },
+                new() { Name = "ScaleY", Type = "float", CanBeEmpty = true },
                 new() { Name = "Order", Type = "int", CanBeEmpty = true }
             };
 
