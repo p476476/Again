@@ -1,21 +1,23 @@
 {
-  "name": "AgainRuntimeAsmdef",
-  "rootNamespace": "",
-  "references": [
-    "Unity.TextMeshPro",
-    "spine-unity",
-    "spine-csharp",
-    "DOTweenPro.Scripts",
-    "DOTween.Modules",
-    "Unity.InputSystem"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "AgainRuntimeAsmdef",
+    "rootNamespace": "",
+    "references": [
+        "Unity.TextMeshPro",
+        "spine-unity",
+        "spine-csharp",
+        "DOTweenPro.Scripts",
+        "DOTween.Modules",
+        "Unity.InputSystem",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Universal.2D.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

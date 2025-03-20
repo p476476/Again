@@ -61,7 +61,7 @@ namespace Again.Runtime
         {
             var commands = await SheetImporter.LoadScript(scriptName);
             Stop();
-            CameraManager.avgCamera.enabled = true;
+            CameraManager.Show();
             RunCommands(commands);
         }
 

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: DefaultAgainSystemSetting
   m_EditorClassIdentifier: 
   googleSheetId: 18vCXwuMSR7K0FUEEcHy7X5NzgtyWyUgr7sbeIRW74zs
+  googleApiKey: AIzaSyB5sAfLcsXAgVOHM262b62Mv42WDQGYUMg
   dialogueView: {fileID: 4350434583265305516, guid: e54d3cff074db874189f9295b5ae72c5, type: 3}
   logView: {fileID: 3856453055566464369, guid: c02b6ac2ce202c34b9527cce260b276e, type: 3}
   optionMenuView: {fileID: 5642992602930132932, guid: c8c87a7781bebd44eb70213a29ca7fe7, type: 3}

@@ -5,6 +5,7 @@ using Again.Runtime.Enums;
 using Again.Runtime.Save.Structs;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Again.Runtime.Components.Managers
 {
@@ -23,14 +24,17 @@ namespace Again.Runtime.Components.Managers
             if (avgCamera == null) return;
             avgCamera.transform.position = _originalPosition;
             avgCamera.enabled = false;
+            var cameraData = Camera.main.GetUniversalAdditionalCameraData();
+            if (cameraData)
+                cameraData.cameraStack.Remove(avgCamera);
         }
 
-        public void Load(string saveData)
+        public void Show()
         {
-            var data = CameraManagerSaveData.FromJson(saveData);
-            avgCamera.transform.position = data.Transform.position;
-            avgCamera.transform.rotation = data.Transform.rotation;
-            _originalPosition = data.OriginalPosition;
+            var cameraData = Camera.main.GetUniversalAdditionalCameraData();
+            if (cameraData == null) return;
+            avgCamera.enabled = true;
+            cameraData.cameraStack.Add(avgCamera);
         }
 
         public string Save()
