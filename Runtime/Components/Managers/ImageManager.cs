@@ -110,6 +110,15 @@ namespace Again.Runtime.Components.Managers
                     break;
             }
         }
+
+        public void HideBackground(HideBackgroundCommand command, Action onComplete = null)
+        {
+            var duration = command.IsSkip ? 0 : command.Duration;
+            background.DOFade(0, duration).OnComplete(() =>
+            {
+                onComplete?.Invoke();
+            });
+        }
         
         public void Show(ShowImageCommand command, Action onComplete = null)
         {

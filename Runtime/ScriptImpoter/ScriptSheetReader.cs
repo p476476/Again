@@ -42,6 +42,7 @@ namespace Again.Runtime.ScriptImpoter
                 { "ShowSpine", CreateShowSpineCommand },
                 { "Wait", CreateWaitCommand },
                 { "ChangeBackground", CreateChangeBackgroundCommand },
+                { "HideBackground", CreateHideBackgroundCommand},
                 { "ShowTransfer", CreateShowTransferCommand },
                 { "HideTransfer", CreateHideTransferCommand },
                 { "ChangeImageColor", CreateChangeImageColorCommand },
@@ -327,6 +328,17 @@ namespace Again.Runtime.ScriptImpoter
             SetProperties(command, propertyInfos, dict);
             dict.TryGetValue("Color", out var colorString);
             command.Color = ParseColorString(colorString);
+            return command;
+        }
+
+        private static Command CreateHideBackgroundCommand(Dictionary<string, string> dict)
+        {
+            var propertyInfos = new List<PropertyInfo>
+            {
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+            };
+            var command = new HideBackgroundCommand();
+            SetProperties(command, propertyInfos, dict);
             return command;
         }
 
