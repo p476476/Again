@@ -319,10 +319,14 @@ namespace Again.Runtime.ScriptImpoter
         {
             var propertyInfos = new List<PropertyInfo>
             {
-                new() { Name = "ImageName", Type = "string", CanBeEmpty = false }
+                new() { Name = "ImageName", Type = "string", CanBeEmpty = true },
+                new() { Name = "Duration", Type = "float", CanBeEmpty = true },
+                new() { Name =  "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
             };
             var command = new ChangeBackgroundCommand();
             SetProperties(command, propertyInfos, dict);
+            dict.TryGetValue("Color", out var colorString);
+            command.Color = ParseColorString(colorString);
             return command;
         }
 
@@ -613,15 +617,24 @@ namespace Again.Runtime.ScriptImpoter
             return command;
         }
 
-        private static Color32 ParseColorString(string color)
+        private static Color ParseColorString(string color)
         {
-            var match = Regex.Match(color, @"\((\d+),(\d+),(\d+)\)");
-            var c = new Color32(
-                byte.Parse(match.Groups[1].Value),
-                byte.Parse(match.Groups[2].Value),
-                byte.Parse(match.Groups[3].Value),
-                255
-            );
+            if (string.IsNullOrEmpty(color)) return Color.white;
+            var matches = Regex.Matches(color, @"\d+");
+            var c = new Color();
+            if (matches.Count == 3)
+            {
+                c.r = float.Parse(matches[0].Value) / 255;
+                c.g = float.Parse(matches[1].Value) / 255;
+                c.b = float.Parse(matches[2].Value) / 255;
+                c.a = 1;
+            } else if (matches.Count == 4)
+            {
+                c.r = float.Parse(matches[0].Value) / 255;
+                c.g = float.Parse(matches[1].Value) / 255;
+                c.b = float.Parse(matches[2].Value) / 255;
+                c.a = float.Parse(matches[3].Value) / 255;
+            }
             return c;
         }
 

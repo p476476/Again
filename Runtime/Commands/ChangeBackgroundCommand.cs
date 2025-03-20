@@ -1,3 +1,5 @@
+using Again.Runtime.Components.Managers;
+using Again.Runtime.Enums;
 using UnityEngine;
 
 namespace Again.Runtime.Commands
@@ -5,23 +7,13 @@ namespace Again.Runtime.Commands
     public class ChangeBackgroundCommand : Command
     {
         public string ImageName { get; set; }
-
+        public Color Color { get; set; }
+        public ShowAnimationType ShowType { get; set; } = ShowAnimationType.None;
+        public float Duration { get; set; } = 1f;
+        
         public override void Execute()
         {
-            var sprite = Resources.Load<Sprite>($"Backgrounds/{ImageName}");
-
-            // 如果找到了圖片，就設置為背景
-            if (sprite != null)
-            {
-                AgainSystem.Instance.ImageManager.background.sprite = sprite;
-                AgainSystem.Instance.ImageManager.background.enabled = true;
-            }
-            else
-            {
-                Debug.LogError($"Line {Id} 未找到背景圖片: {ImageName}");
-            }
-
-            AgainSystem.Instance.NextCommand();
+            AgainSystem.Instance.ImageManager.ChangeBackground(this, () => AgainSystem.Instance.NextCommand());
         }
     }
 }

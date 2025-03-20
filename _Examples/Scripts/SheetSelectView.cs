@@ -100,7 +100,6 @@ namespace Again._Examples.Scripts
 
         private void OnClickPageButton(string page)
         {
-            animationContainer.gameObject.SetActive(false);
             AgainSystem.Instance.Execute(page);
         }
     }

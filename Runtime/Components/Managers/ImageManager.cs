@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Again.Runtime.Commands;
 using Again.Runtime.Commands.Image;
 using Again.Runtime.Common;
 using Again.Runtime.Enums;
@@ -16,6 +17,7 @@ namespace Again.Runtime.Components.Managers
         public GameObject imageView;
         public GameObject imagePrefab;
         public Image background;
+        public Image background2;
         private readonly Dictionary<string, GameObject> _imageObjectDict = new();
 
         private void Awake()
@@ -27,8 +29,12 @@ namespace Again.Runtime.Components.Managers
         {
             foreach (var go in _imageObjectDict.Values) Destroy(go);
             _imageObjectDict.Clear();
-            if (background)
-                background.enabled = false;
+            background.enabled = false;
+            background2.enabled = false;
+            background.sprite = null;
+            background2.sprite = null;
+            background.color = Color.clear;
+            background2.color = Color.clear;
         }
 
         public void Load(string saveDataStr)
@@ -60,6 +66,51 @@ namespace Again.Runtime.Components.Managers
             return go;
         }
 
+        public void ChangeBackground(ChangeBackgroundCommand command, Action onComplete = null)
+        {
+            background2.color = command.Color;
+            if (!string.IsNullOrEmpty(command.ImageName))
+            {
+                var sprite = Resources.Load<Sprite>($"Images/{command.ImageName}");
+                if (sprite == null)
+                {
+                    Debug.LogError($"Texture {command.ImageName} not found");
+                    onComplete?.Invoke();
+                    return;
+                }
+                background2.sprite = sprite;
+            }
+            else
+            {
+                background2.sprite = null;
+            }
+            
+            var duration = command.IsSkip ? 0 : command.Duration;
+
+            background.enabled = true;
+            background2.enabled = true;
+            background2.transform.SetAsLastSibling();
+            switch (command.ShowType)
+            {
+                case ShowAnimationType.Fade:
+                    background2.color = new Color(command.Color.r, command.Color.g, command.Color.b, 0);
+                    background2.DOFade(command.Color.a, duration).OnComplete(() =>
+                    {
+                        (background2, background) = (background, background2);
+                        background2.enabled = false;
+                        onComplete?.Invoke();
+                    });
+                    break;
+                case ShowAnimationType.None:
+                case ShowAnimationType.SlideFromLeft:
+                case ShowAnimationType.SlideFromRight:
+                    (background2, background) = (background, background2);
+                    background2.enabled = false;
+                    onComplete?.Invoke();
+                    break;
+            }
+        }
+        
         public void Show(ShowImageCommand command, Action onComplete = null)
         {
             // find image by name in Resources/Images
