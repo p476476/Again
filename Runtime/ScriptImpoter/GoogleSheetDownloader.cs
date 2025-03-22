@@ -21,7 +21,7 @@ namespace Again.Runtime.ScriptImpoter
             {
                 var url = string.Format(URLFormat, sheetID, script);
                 var data = FetchData(url);
-                var path = $"Assets/Resources/TSV/{script}.csv";
+                var path = $"Assets/Resources/CSV/{script}.csv";
                 System.IO.File.WriteAllTextAsync(path, data);
             }
         }

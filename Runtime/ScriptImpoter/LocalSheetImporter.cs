@@ -13,7 +13,7 @@ namespace Again.Runtime.ScriptImpoter
 
         public Task<List<string>> LoadScripts()
         {
-            var files = Resources.LoadAll<TextAsset>("TSV");
+            var files = Resources.LoadAll<TextAsset>("CSV");
             var scriptNames = new List<string>();
             foreach (var file in files)
             {
@@ -26,7 +26,7 @@ namespace Again.Runtime.ScriptImpoter
 
         public Task<List<Command>> LoadScript(string scriptName)
         {
-            var file = Resources.Load<TextAsset>($"TSV/{scriptName}");
+            var file = Resources.Load<TextAsset>($"CSV/{scriptName}");
             var lines = file.text.Split(",\"\"\n").ToList();
             lines.RemoveAt(0);
             var data2D = new List<List<string>>();
@@ -42,7 +42,7 @@ namespace Again.Runtime.ScriptImpoter
 
         public Task<Dictionary<string, List<string>>> LoadTranslation()
         {
-            var file = Resources.Load<TextAsset>("TSV/Translation");
+            var file = Resources.Load<TextAsset>("CSV/Translation");
             if (file == null) return Task.FromResult(new Dictionary<string, List<string>>());
             var lines = file.text.Split("\r\n").ToList();
             var dict = new Dictionary<string, List<string>>();
@@ -58,7 +58,7 @@ namespace Again.Runtime.ScriptImpoter
 
         public Task<Dictionary<string, SpineInfo>> LoadSpineSetting()
         {
-            var file = Resources.Load<TextAsset>("TSV/SpineSetting");
+            var file = Resources.Load<TextAsset>("CSV/SpineSetting");
             if (file == null) return Task.FromResult(new Dictionary<string, SpineInfo>());
             var lines = file.text.Split("\r\n").ToList();
             var dict = new Dictionary<string, SpineInfo>();
