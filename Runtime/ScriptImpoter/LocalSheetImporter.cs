@@ -27,11 +27,15 @@ namespace Again.Runtime.ScriptImpoter
         public Task<List<Command>> LoadScript(string scriptName)
         {
             var file = Resources.Load<TextAsset>($"TSV/{scriptName}");
-            var lines = file.text.Split(Environment.NewLine).ToList();
+            var lines = file.text.Split(",\"\"\n").ToList();
             lines.RemoveAt(0);
-            var data = new List<List<string>>();
-            foreach (var line in lines) data.Add(line.Split("\t").ToList());
-            var commands = ScriptSheetReader.Read(data);
+            var data2D = new List<List<string>>();
+            foreach (var line in lines)
+            {
+                var rowString = line.Trim('"');
+                data2D.Add(rowString.Split("\",\"").ToList());
+            }
+            var commands = ScriptSheetReader.Read(data2D);
 
             return Task.FromResult(commands);
         }

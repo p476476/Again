@@ -49,10 +49,10 @@ namespace Again.Runtime
             TransferView = Instantiate(setting.transferView, uiCanvas).GetComponent<ITransferView>();
             DialogueManager.Init(uiCanvas, setting);
 
-            if (string.IsNullOrEmpty(setting.googleSheetId))
-                SheetImporter = new LocalSheetImporter();
-            else
+            if (setting.useGoogleSheet)
                 SheetImporter = new GoogleSheetImporter(setting.googleSheetId, setting.googleApiKey);
+            else
+                SheetImporter = new LocalSheetImporter();
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
             SpineManager.UpdateSpineInfos(await SheetImporter.LoadSpineSetting());
         }
