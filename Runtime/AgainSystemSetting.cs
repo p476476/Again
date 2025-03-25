@@ -1,3 +1,4 @@
+using Again.Runtime.ScriptImpoter;
 using UnityEngine;
 
 namespace Again.Runtime
@@ -12,5 +13,6 @@ namespace Again.Runtime
         public GameObject logView;
         public GameObject optionMenuView;
         public GameObject transferView;
+        public SpineInfo[] spineInfos;
     }
 }

@@ -71,7 +71,7 @@ namespace Again.Runtime.ScriptImpoter
                 if (!float.TryParse(values[2], out var y)) y = 0;
                 if (!float.TryParse(values[3], out var sx)) sx = 1;
                 if (!float.TryParse(values[4], out var sy)) sy = 1;
-                dict[values[0]] = new SpineInfo(x, y, sx, sy);
+                dict[values[0]] = new SpineInfo(values[0], x, y, sx, sy);
             }
 
             return Task.FromResult(dict);

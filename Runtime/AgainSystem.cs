@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Again.Runtime.Commands;
 using Again.Runtime.Components.Interfaces;
 using Again.Runtime.Components.Managers;
@@ -54,7 +55,7 @@ namespace Again.Runtime
             else
                 SheetImporter = new LocalSheetImporter();
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
-            SpineManager.UpdateSpineInfos(await SheetImporter.LoadSpineSetting());
+            SpineManager.UpdateSpineInfos(setting.spineInfos.ToDictionary(info => info.Name, info => info));
         }
 
         public async void Execute(string scriptName)
