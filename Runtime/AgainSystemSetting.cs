@@ -8,7 +8,7 @@ namespace Again.Runtime
     {
         public bool useGoogleSheet;
         public string googleSheetId = "18vCXwuMSR7K0FUEEcHy7X5NzgtyWyUgr7sbeIRW74zs";
-        public string googleApiKey = "";
+        public string googleApiKey = "AIzaSyB5sAfLcsXAgVOHM262b62Mv42WDQGYUMg";
         public GameObject dialogueView;
         public GameObject logView;
         public GameObject optionMenuView;

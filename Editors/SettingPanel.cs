@@ -132,7 +132,7 @@ namespace Plugins.Again.Editors
             if (!_settings)
             {
                 EditorGUILayout.HelpBox("Setting file not found. Please create one.", MessageType.Warning);
-                if (GUILayout.Button("Create Setting File"))
+                if (GUILayout.Button("建立設定檔"))
                 {
                     // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
                     CreateSettingFile();
@@ -142,21 +142,28 @@ namespace Plugins.Again.Editors
 
             }
             
-            _settings.useGoogleSheet = EditorGUILayout.Toggle("Use Google Sheet", _settings.useGoogleSheet);
+            var useRemoteContent = new GUIContent("Use Google Sheet", "要用遠端的腳本的話，請打勾。");
+            _settings.useGoogleSheet = EditorGUILayout.Toggle(useRemoteContent, _settings.useGoogleSheet);
             if (_settings.useGoogleSheet)
             {
-                _settings.googleSheetId = EditorGUILayout.TextField("Google Sheet ID", _settings.googleSheetId);
-                _settings.googleApiKey = EditorGUILayout.TextField("Google API Key", _settings.googleApiKey);
+                var googleSheetContent = new GUIContent("Google Sheet ID", "URL 中的 Google Sheet ID");
+                var googleApiKeyContent = new GUIContent("Google API Key", "請求分頁資料用的 API Key");
+                _settings.googleSheetId = EditorGUILayout.TextField(googleSheetContent, _settings.googleSheetId);
+                _settings.googleApiKey = EditorGUILayout.TextField(googleApiKeyContent, _settings.googleApiKey);
             }
 
 
-            _settings.dialogueView = (GameObject)EditorGUILayout.ObjectField("Dialogue View", _settings.dialogueView, typeof(GameObject), false);
-            _settings.logView = (GameObject)EditorGUILayout.ObjectField("Log View", _settings.logView, typeof(GameObject), false);
-            _settings.optionMenuView = (GameObject)EditorGUILayout.ObjectField("Option Menu View", _settings.optionMenuView, typeof(GameObject), false);
-            _settings.transferView = (GameObject)EditorGUILayout.ObjectField("Transfer View", _settings.transferView, typeof(GameObject), false);
+            var dialogueViewContent = new GUIContent("Dialogue View", "對話框的預置物件");
+            var logViewContent = new GUIContent("Log View", "對話紀錄的預置物件");
+            var optionMenuViewContent = new GUIContent("Option Menu View", "選項選單的預置物件");
+            var transferViewContent = new GUIContent("Transfer View", "場景轉換的預置物件");
+            _settings.dialogueView = (GameObject)EditorGUILayout.ObjectField(dialogueViewContent, _settings.dialogueView, typeof(GameObject), false);
+            _settings.logView = (GameObject)EditorGUILayout.ObjectField(logViewContent, _settings.logView, typeof(GameObject), false);
+            _settings.optionMenuView = (GameObject)EditorGUILayout.ObjectField(optionMenuViewContent, _settings.optionMenuView, typeof(GameObject), false);
+            _settings.transferView = (GameObject)EditorGUILayout.ObjectField(transferViewContent, _settings.transferView, typeof(GameObject), false);
             
             EditorGUILayout.Space();
-            if (GUILayout.Button("Download Sheet"))
+            if (GUILayout.Button("下載遠端腳本"))
             { 
                 GoogleSheetDownloader.Download(_settings.googleSheetId, _settings.googleApiKey);
             }
