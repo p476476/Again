@@ -372,7 +372,7 @@ namespace Again.Runtime.Components.Managers
             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.zero;
 
             goRT.DOScale(
-                    new Vector3(command.Scale, command.Scale, 1),
+                    new Vector3(command.ScaleX, command.ScaleY, 1),
                     command.IsSkip ? 0 : command.Duration
                 )
                 .OnComplete(() =>

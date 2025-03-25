@@ -420,7 +420,8 @@ namespace Again.Runtime.ScriptImpoter
             {
                 new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
-                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
+                new() { Name = "ScaleX", Type = "float", CanBeEmpty = true },
+                new() { Name = "ScaleY", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
             };
