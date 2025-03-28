@@ -2,7 +2,7 @@ using Again.Runtime.Enums;
 
 namespace Again.Runtime.Commands.Spine
 {
-    public class ShowSpineCommand : Command
+    public class ShowSpineCommand : Command, IScalableCommand
     {
         public string Name { get; set; }
         public string Animation { get; set; }

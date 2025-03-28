@@ -3,7 +3,7 @@ using DG.Tweening;
 
 namespace Again.Runtime.Commands.Image
 {
-    public class ShowImageCommand : Command
+    public class ShowImageCommand : Command, IScalableCommand
     {
         public string Name { get; set; }
 
@@ -17,7 +17,9 @@ namespace Again.Runtime.Commands.Image
 
         public float PosY { get; set; } = 0;
 
-        public float Scale { get; set; } = 1f;
+        public float ScaleX { get; set; } = 1f;
+        
+        public float ScaleY { get; set; } = 1f;
 
         public float NextDuration { get; set; } = -1f;
 

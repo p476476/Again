@@ -190,7 +190,6 @@ namespace Again.Runtime.ScriptImpoter
                 new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "ImageName", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
-                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosY", Type = "float", CanBeEmpty = true },
                 new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
@@ -200,6 +199,7 @@ namespace Again.Runtime.ScriptImpoter
 
             var command = new ShowImageCommand();
             SetProperties(command, propertyInfos, dict);
+            SetScaleProperty(command, dict);
             return command;
         }
 
@@ -228,12 +228,12 @@ namespace Again.Runtime.ScriptImpoter
             {
                 new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
-                new() { Name = "Scale", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
             };
             var command = new ScaleImageCommand();
             SetProperties(command, propertyInfos, dict);
+            SetScaleProperty(command, dict);
             return command;
         }
 
@@ -367,13 +367,12 @@ namespace Again.Runtime.ScriptImpoter
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "ShowType", Type = "ShowAnimationType", CanBeEmpty = true },
                 new() { Name = "IsLoop", Type = "boolean", CanBeEmpty = true },
-                new() { Name = "ScaleX", Type = "float", CanBeEmpty = true },
-                new() { Name = "ScaleY", Type = "float", CanBeEmpty = true },
                 new() { Name = "Order", Type = "int", CanBeEmpty = true }
             };
 
             var showSpineCommand = new ShowSpineCommand();
             SetProperties(showSpineCommand, propertyInfos, dict);
+            SetScaleProperty(showSpineCommand, dict);
             return showSpineCommand;
         }
 
@@ -420,14 +419,13 @@ namespace Again.Runtime.ScriptImpoter
             {
                 new() { Name = "Name", Type = "string", CanBeEmpty = false },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
-                new() { Name = "ScaleX", Type = "float", CanBeEmpty = true },
-                new() { Name = "ScaleY", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorX", Type = "float", CanBeEmpty = true },
                 new() { Name = "AnchorY", Type = "float", CanBeEmpty = true }
             };
 
             var command = new ScaleSpineCommand();
             SetProperties(command, propertyInfos, dict);
+            SetScaleProperty(command, dict);
             return command;
         }
 
@@ -721,6 +719,20 @@ namespace Again.Runtime.ScriptImpoter
                         $"Line {_currentCommandIndex} {command.GetType().Name.Replace("Command", "")} {propertyInfo.Name} {stringValue} 格式錯誤");
                 }
             }
+        }
+        
+        private static void SetScaleProperty(IScalableCommand command, Dictionary<string, string> dict)
+        {
+            if (dict.TryGetValue("Scale", out var scaleString))
+            {
+                command.ScaleX = command.ScaleY = float.Parse(scaleString);
+                return;
+            }
+            
+            if (dict.TryGetValue("ScaleX", out var scaleX))
+                command.ScaleX = float.Parse(scaleX);
+            if (dict.TryGetValue("ScaleY", out var scaleY))
+                command.ScaleY = float.Parse(scaleY);
         }
     }
 }

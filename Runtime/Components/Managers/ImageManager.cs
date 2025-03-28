@@ -143,7 +143,7 @@ namespace Again.Runtime.Components.Managers
             rt.anchorMin = new Vector2(0.5f, 0.5f);
             rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.sizeDelta = new Vector2(spriteRenderer.size.x, spriteRenderer.size.y);
-            rt.localScale = new Vector3(command.Scale, command.Scale, 1);
+            rt.localScale = new Vector3(command.ScaleX, command.ScaleY, 1);
             rt.localPosition = new Vector3(
                 command.PosX * parentWidth / 2,
                 command.PosY * parentHeight / 2,
@@ -283,7 +283,7 @@ namespace Again.Runtime.Components.Managers
             var rt = go.GetComponent<RectTransform>();
             PivotTool.SetPivotInWorldSpace(rt, new Vector2(command.AnchorX, command.AnchorY));
             rt.pivot = new Vector2(command.AnchorX, command.AnchorY);
-            rt.DOScale(new Vector3(command.Scale, command.Scale, 1), command.IsSkip ? 0 : command.Duration)
+            rt.DOScale(new Vector3(command.ScaleX, command.ScaleY, 1), command.IsSkip ? 0 : command.Duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
 

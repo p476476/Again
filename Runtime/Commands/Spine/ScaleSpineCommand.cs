@@ -1,6 +1,6 @@
 namespace Again.Runtime.Commands.Spine
 {
-    public class ScaleSpineCommand : Command
+    public class ScaleSpineCommand : Command, IScalableCommand
     {
         public string Name { get; set; }
         public float Duration { get; set; } = 1f;
