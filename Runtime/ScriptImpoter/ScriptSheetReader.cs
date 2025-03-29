@@ -188,7 +188,7 @@ namespace Again.Runtime.ScriptImpoter
             var propertyInfos = new List<PropertyInfo>
             {
                 new() { Name = "Name", Type = "string", CanBeEmpty = false },
-                new() { Name = "ImageName", Type = "string", CanBeEmpty = false },
+                new() { Name = "ImageName", Type = "string", CanBeEmpty = true },
                 new() { Name = "Duration", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
                 new() { Name = "PosY", Type = "float", CanBeEmpty = true },
@@ -200,6 +200,11 @@ namespace Again.Runtime.ScriptImpoter
             var command = new ShowImageCommand();
             SetProperties(command, propertyInfos, dict);
             SetScaleProperty(command, dict);
+            
+            // 沒有指定 ImageName 就用 Name
+            if (!dict.ContainsKey("ImageName"))
+                command.ImageName = command.Name;
+            
             return command;
         }
 

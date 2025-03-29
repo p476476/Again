@@ -265,8 +265,9 @@ namespace Again.Runtime.Components.Managers
 
             var targetX = command.PosX * parentWidth / 2;
             var targetY = command.PosY * parentHeight / 2;
+            var duration = command.IsSkip ? 0 : command.Duration;
 
-            rt.DOLocalMove(new Vector3(targetX, targetY, 0), command.Duration)
+            rt.DOLocalMove(new Vector3(targetX, targetY, 0), duration)
                 .OnComplete(() => onComplete?.Invoke());
         }
 
