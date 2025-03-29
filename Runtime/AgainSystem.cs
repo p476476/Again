@@ -7,6 +7,7 @@ using Again.Runtime.Components.Managers;
 using Again.Runtime.Enums;
 using Again.Runtime.Save.Structs;
 using Again.Runtime.ScriptImpoter;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,7 +15,7 @@ namespace Again.Runtime
 {
     public class AgainSystem : MonoBehaviour
     {
-        public AgainSystemSetting setting;
+        private AgainSystemSetting _setting;
         [SerializeField] private Transform uiCanvas;
 
         private List<Command> _commands;
@@ -41,21 +42,24 @@ namespace Again.Runtime
                 Instance = this;
             else
                 Destroy(transform.parent.gameObject);
+            
+            _setting = AssetDatabase.LoadAssetAtPath<AgainSystemSetting>("Assets/Settings/AgainSettings.asset");
+            
             _commands = new List<Command>();
             EventManager = new EventManager();
             DialogueManager = GetComponent<DialogueManager>();
             SpineManager = GetComponent<SpineManager>();
             CameraManager = GetComponent<CameraManager>();
             ImageManager = GetComponent<ImageManager>();
-            TransferView = Instantiate(setting.transferView, uiCanvas).GetComponent<ITransferView>();
-            DialogueManager.Init(uiCanvas, setting);
+            TransferView = Instantiate(_setting.transferView, uiCanvas).GetComponent<ITransferView>();
+            DialogueManager.Init(uiCanvas, _setting);
 
-            if (setting.useGoogleSheet)
-                SheetImporter = new GoogleSheetImporter(setting.googleSheetId, setting.googleApiKey);
+            if (_setting.useGoogleSheet)
+                SheetImporter = new GoogleSheetImporter(_setting.googleSheetId, _setting.googleApiKey);
             else
                 SheetImporter = new LocalSheetImporter();
             DialogueManager.SetLocaleDict(await SheetImporter.LoadTranslation());
-            SpineManager.UpdateSpineInfos(setting.spineInfos.ToDictionary(info => info.Name, info => info));
+            SpineManager.UpdateSpineInfos(_setting.spineInfos.ToDictionary(info => info.Name, info => info));
         }
 
         public async void Execute(string scriptName)
