@@ -223,6 +223,8 @@ namespace Again.Runtime.Components.Managers
                 spineHeight * spineScale * spineInfo.offsetRatio.y,
                 0
             );
+            
+            spineGameObject.GetComponentInChildren<MeshRenderer>().sortingOrder = order;
 
             var material = spineAnimation.skeletonDataAsset.atlasAssets[0].PrimaryMaterial;
             material.SetColor("_Color", Color.white);

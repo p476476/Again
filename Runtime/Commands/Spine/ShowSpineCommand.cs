@@ -23,7 +23,7 @@ namespace Again.Runtime.Commands.Spine
 
         public bool IsLoop { get; set; } = true;
 
-        public int Order { get; set; } = 10;
+        public int Order { get; set; } = (int)Enums.Order.Image;
 
         public override void Execute()
         {

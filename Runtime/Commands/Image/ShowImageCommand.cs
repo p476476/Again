@@ -23,7 +23,7 @@ namespace Again.Runtime.Commands.Image
 
         public float NextDuration { get; set; } = -1f;
 
-        public int Order { get; set; } = 10;
+        public int Order { get; set; } = (int)Enums.Order.Image;
 
 
         public override void Execute()
