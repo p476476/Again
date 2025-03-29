@@ -58,7 +58,6 @@
 
 ## 如何新增一個 AgainSystem 到新場景
 - 將`Prefab/AgainSystem`或`Prefab/AgainSystemOrtho`擇一放入場景中
-- 點開物件 AgainSystem>Main，Inspector看到Again System並設定GoogleSheetId為剛剛的`GoogleSheetId`貼上
 - 場景中新增一個EventSystem
 - 場景中新增一個空物件，並加上程式碼
   ```csharp
@@ -73,8 +72,7 @@
 
 ## 資源放置
 - 資源要放在對應的資料夾下，系統才找的到圖和Spine，否則會直接跳過指令
-  - Assets/Resources/Backgrounds，背景圖片
-  - Assets/Resources/Images，圖片
+  - Assets/Resources/Images，背景圖&圖片
   - Assets/Resources/Spines，Spine動畫
   - Assets/Resources/CSV，本地腳本
 
@@ -171,6 +169,16 @@
         // 處理事件
     }
     ```
+
+## 顯示層級
+- 背景 0
+- 圖片、Spine 100
+  - ShowImage, ShowSpine 有Order參數可以調整
+- 對話框 200
+- 選項 300
+- 對話紀錄 400
+- 轉場 500
+- 黑邊 600
 
 ## 多語言
 - AVG多語言的翻譯會放在`Translation`分頁中

@@ -6,9 +6,10 @@
 ## 優化
 -   移除doozy，都改用原生的UI
 -   將可修改的物件做成prefab，改用prefab生成AVG物件，可到設定面板更換自己的prefab
--   整理Avg個畫面的Order
+-   整理Avg個畫面的顯示層級(Order)，可以參考README的層級表
 -   執行腳本時Camera改用overlay的方式加到main camera上，解決需要切換開關攝影機的問題
--   ShowSpine, ScaleSpine, ShowImage, ScaleImage 的 Scale參數拆成ScaleX 和 ScaleY 兩個分開控制
+-   ShowSpine, ScaleSpine, ShowImage, ScaleImage 的新增參數ScaleX 和 ScaleY 可以個別縮放
+-   背景圖和圖片統一放在 Resources/Images 底下
 
 ## 新功能
 -   對話新增自動撥放和skip對話功能
@@ -16,7 +17,6 @@
 -   新增 Call 指令，可以執行另一個對話腳本
 -   新增 PlaySound指令，可以撥放音效
 -   新增 HideBackground 指令，可以關閉或淡出背景
--   新增PlaySound指令，可以撥放音效
 -   新增設定面板，可以從Unity上方 Tools > Again > Setting 開啟
 
 																			
