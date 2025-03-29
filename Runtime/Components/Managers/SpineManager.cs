@@ -115,14 +115,14 @@ namespace Again.Runtime.Components.Managers
             return SpineManagerSaveData.ToJson(_spineGameObjectDict);
         }
 
-        public GameObject GetSpineObject(string spineName)
+        public GameObject GetSpineObject(string name)
         {
-            return _spineGameObjectDict.TryGetValue(spineName, out var go) ? go : null;
+            return _spineGameObjectDict.TryGetValue(name, out var go) ? go : null;
         }
 
         public void Show(ShowSpineCommand command, Action onComplete = null)
         {
-            var spineInfo = _spineInfos.Find(info => info.spineName == command.Name);
+            var spineInfo = _spineInfos.Find(info => info.spineName == command.SpineName);
             if (spineInfo == null)
             {
                 Debug.LogError("Spine not found: " + command.Name);
@@ -198,11 +198,11 @@ namespace Again.Runtime.Components.Managers
             }
         }
 
-        private GameObject CreateSpineGameObject(string spineName, string animationName,
+        private GameObject CreateSpineGameObject(string objectName, string animationName,
             string skinName, bool isLoop, int order, SpineInfo spineInfo, int id)
         {
             var spineGameObject = Instantiate(spineGameObjectPrefab, spineView.transform);
-            spineGameObject.name = spineName;
+            spineGameObject.name = objectName;
 
             var spineAnimation = spineGameObject.GetComponentInChildren<SkeletonAnimation>();
             spineAnimation.PhysicsPositionInheritanceFactor = Vector2.one * PhysicsFactor;
@@ -211,7 +211,7 @@ namespace Again.Runtime.Components.Managers
             spineAnimation.skeletonDataAsset = spineInfo.skeletonDataAsset;
             _SetAnimation(spineAnimation, animationName, isLoop, id);
             _SetSkin(spineAnimation, skinName, id);
-            _spineGameObjectDict.Add(spineName, spineGameObject);
+            _spineGameObjectDict.Add(objectName, spineGameObject);
 
 
             var spineWidth = spineAnimation.skeletonDataAsset.GetSkeletonData(true).Width;

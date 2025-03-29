@@ -5,6 +5,7 @@ namespace Again.Runtime.Commands.Spine
     public class ShowSpineCommand : Command, IScalableCommand
     {
         public string Name { get; set; }
+        public string SpineName { get; set; }
         public string Animation { get; set; }
         public string Skin { get; set; }
 

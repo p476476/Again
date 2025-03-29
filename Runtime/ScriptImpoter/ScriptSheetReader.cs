@@ -360,6 +360,7 @@ namespace Again.Runtime.ScriptImpoter
             var propertyInfos = new List<PropertyInfo>
             {
                 new() { Name = "Name", Type = "string", CanBeEmpty = false },
+                new() { Name = "SpineName", Type = "string", CanBeEmpty = true },
                 new() { Name = "Animation", Type = "string", CanBeEmpty = false },
                 new() { Name = "Skin", Type = "string", CanBeEmpty = true },
                 new() { Name = "PosX", Type = "float", CanBeEmpty = true },
@@ -373,6 +374,10 @@ namespace Again.Runtime.ScriptImpoter
             var showSpineCommand = new ShowSpineCommand();
             SetProperties(showSpineCommand, propertyInfos, dict);
             SetScaleProperty(showSpineCommand, dict);
+            
+            // 沒有指定 SpineName 就用 Name
+            if (!dict.ContainsKey("SpineName"))
+                showSpineCommand.SpineName = showSpineCommand.Name;
             return showSpineCommand;
         }
 
